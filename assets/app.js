@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────
-   Cabo Birthday Invite — front-end logic
+   Birthday Escape Invite — front-end logic
    - injects config into the page
    - email gate → backend allowlist check
    - RSVP + flight details → backend save
@@ -19,12 +19,15 @@
   }
 
   setText("host-line", (cfg.hostName || "The") + "'s");
-  setText("occasion-line", cfg.occasion || "Birthday");
+  setText("occasion-line", cfg.occasion || "Escape");
   setText("dates-chip", cfg.dates);
-  setText("loc-chip", cfg.location);
+  // Public page keeps the destination secret — show the teaser, not the place.
+  setText("loc-chip", cfg.locationTeaser || "🤫 Destination is a surprise");
   setText("tagline", cfg.tagline);
-  setText("foot-loc", cfg.location);
-  document.title = (cfg.hostName ? cfg.hostName + "'s " : "") + "Cabo Birthday — You're Invited";
+  // The real destination is only revealed after a guest is through the gate.
+  setText("reveal-place", cfg.location);
+  setText("reveal-when", cfg.dates);
+  document.title = "You're Invited 🌅";
 
   var list = document.getElementById("highlight-list");
   if (list && Array.isArray(cfg.highlights)) {
@@ -177,7 +180,7 @@
     successPane.hidden = false;
     if (attending === "Yes") {
       successTitle.textContent = "You're locked in! 🎉";
-      successMsg.textContent = "See you in " + (cfg.location || "Cabo") + ". We'll send the full itinerary soon.";
+      successMsg.textContent = "See you in " + (cfg.location || "paradise") + ". We'll send the full itinerary soon.";
       burstConfetti();
     } else {
       successTitle.textContent = "We'll miss you 💛";

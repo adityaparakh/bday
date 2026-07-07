@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cabo Birthday — You're Invited</title>
-  <meta name="description" content="A private invitation. Yachts, sunsets, and dancing in Cabo San Lucas." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>You're Invited 🌅</title>
+  <meta name="description" content="A private invitation. Enter your email to unlock the details." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -52,13 +52,13 @@
       <p class="eyebrow" data-reveal>You're invited to</p>
       <h1 class="wordmark" data-reveal>
         <span class="line-1" id="host-line">Aditya's</span>
-        <span class="cabo">Cabo</span>
-        <span class="line-3" id="occasion-line">Birthday</span>
+        <span class="cabo">Birthday</span>
+        <span class="line-3" id="occasion-line">Escape</span>
       </h1>
       <p class="hero-meta" data-reveal>
         <span id="dates-chip">Nov 14–17, 2026</span>
         <span class="dot">•</span>
-        <span id="loc-chip">Cabo San Lucas, México</span>
+        <span id="loc-chip">🤫 Destination is a surprise</span>
       </p>
       <p class="hero-tag" id="tagline" data-reveal>Yachts, sunsets, and a whole lot of dancing.</p>
       <a href="#rsvp" class="cta" data-reveal>Get your invite →</a>
@@ -96,8 +96,15 @@
         <!-- STATE 2: RSVP form (hidden until unlocked) -->
         <div class="pane" id="rsvp-pane" hidden>
           <span class="badge badge-ok">You're on the list 🎉</span>
-          <h2 id="welcome-name">Let's get you on the boat</h2>
-          <p class="pane-sub">Tell us if you're in, and drop your flight details so we can plan pickups.</p>
+          <h2 id="welcome-name">Let's get you there</h2>
+
+          <div class="reveal" id="reveal">
+            <span class="reveal-lead">Surprise — we're going to</span>
+            <strong class="reveal-place" id="reveal-place">🌴</strong>
+            <span class="reveal-when" id="reveal-when">Oct 9–11, 2026</span>
+          </div>
+
+          <p class="pane-sub">Let us know if you're in, then drop your flight details so we can plan airport pickups.</p>
 
           <form id="rsvp-form" novalidate>
             <fieldset class="attending">
@@ -168,7 +175,7 @@
         <div class="pane pane-center" id="success" hidden>
           <div class="success-emoji">🌴🛥️🌅</div>
           <h2 id="success-title">You're locked in!</h2>
-          <p class="pane-sub" id="success-msg">See you in Cabo. We'll be in touch with the full itinerary.</p>
+          <p class="pane-sub" id="success-msg">We'll be in touch with the full itinerary.</p>
           <button type="button" class="btn-ghost" id="edit-rsvp">Edit my details</button>
         </div>
 
@@ -177,7 +184,7 @@
   </main>
 
   <footer class="foot">
-    <p>Made with 🌅 for the crew · <span id="foot-loc">Cabo San Lucas</span></p>
+    <p>Made with 🌅 for the crew</p>
   </footer>
 
   <script src="assets/config.js"></script>

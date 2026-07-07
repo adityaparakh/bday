@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────
-   Cabo Birthday Invite — sunset over the Sea of Cortez
+   Birthday Escape Invite — sunset theme
    ───────────────────────────────────────────────────────────── */
 
 :root {
@@ -129,8 +129,9 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 .hero-copy {
   position: relative;
   z-index: 3;
-  max-width: 760px;
-  margin-bottom: 2vh; /* lift copy above the setting sun */
+  width: 100%;          /* stay within the viewport, don't size to widest line */
+  max-width: 680px;
+  margin: 0 auto 2vh;   /* lift copy above the setting sun */
 }
 /* soft radial scrim so text stays legible over the bright gradient */
 .hero-copy::before {
@@ -165,7 +166,7 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
   font-family: var(--font-script);
   font-weight: 400;
   text-transform: none;
-  font-size: clamp(3.6rem, 15vw, 7.4rem);
+  font-size: clamp(2.9rem, 13vw, 7.4rem);
   line-height: .9;
   background: linear-gradient(180deg, #fff6e9, var(--gold) 70%, var(--amber));
   -webkit-background-clip: text;
@@ -175,6 +176,11 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 }
 
 .hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 10px;
   font-weight: 600;
   font-size: clamp(.95rem, 2.4vw, 1.15rem);
   letter-spacing: .01em;
@@ -182,7 +188,7 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
   color: var(--sand);
   text-shadow: 0 2px 16px rgba(20,4,40,.6);
 }
-.hero-meta .dot { opacity: .5; margin: 0 .5em; }
+.hero-meta .dot { opacity: .5; }
 
 .hero-tag {
   color: var(--sand-dim);
@@ -271,6 +277,37 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 }
 .pane-sub { color: var(--sand-dim); margin: 0 0 1.4em; line-height: 1.5; }
 .pane-center { text-align: center; }
+
+/* destination reveal — shown only after a guest unlocks the invite */
+.reveal {
+  display: flex;
+  flex-direction: column;
+  gap: .18em;
+  text-align: center;
+  margin: 1.1em 0 1.5em;
+  padding: 1.1em 1em;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255,209,102,.16), rgba(255,61,139,.16));
+  border: 1px solid rgba(255,209,102,.4);
+}
+.reveal-lead {
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--sand-dim);
+}
+.reveal-place {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.5rem, 6vw, 2.1rem);
+  line-height: 1.1;
+  background: linear-gradient(180deg, var(--gold), var(--amber));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.reveal-when { font-weight: 600; color: var(--sand); }
 
 /* fields */
 .field { display: block; margin-bottom: 1em; }
@@ -425,6 +462,24 @@ textarea { resize: vertical; }
   100% { transform: translateX(-22vw) translateY(0) rotate(-1deg); }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Mobile refinements ───────────────────────────────── */
+@media (max-width: 560px) {
+  .hero { padding: 4vh 18px 4vh; }
+  .hero-meta { flex-direction: column; gap: 4px; }
+  .hero-meta .dot { display: none; }
+  .highlights { padding-top: 44px; padding-bottom: 44px; }
+  .highlights li { padding: 16px 18px; }
+  .flight-block { padding: 1em .9em .3em; }
+  .card { border-radius: 22px; }
+}
+
+/* honor iOS safe areas (notch / home indicator) */
+@supports (padding: max(0px)) {
+  .hero { padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
+  .rsvp, .highlights { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+  .foot { padding-bottom: max(60px, env(safe-area-inset-bottom)); }
+}
 
 /* ── Reduced motion ───────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
