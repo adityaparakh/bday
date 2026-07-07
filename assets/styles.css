@@ -1,0 +1,434 @@
+/* ─────────────────────────────────────────────────────────────
+   Cabo Birthday Invite — sunset over the Sea of Cortez
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --night:   #1a1145;   /* dusk sky, deepest */
+  --dusk:    #3a1a5e;   /* upper sky */
+  --coral:   #ff6b5e;   /* sunset */
+  --magenta: #ff3d8b;
+  --amber:   #ff9e42;
+  --gold:    #ffd166;
+  --aqua:    #2dd4bf;   /* the water */
+  --sand:    #fff6e9;   /* warm text */
+  --sand-dim:#e9ddcf;
+  --ink:     #0c0722;   /* silhouettes */
+
+  --card-bg: rgba(26, 17, 69, 0.55);
+  --card-brd: rgba(255, 246, 233, 0.16);
+
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-script: "Pacifico", cursive;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --maxw: 1080px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--sand);
+  background: var(--night);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 { margin: 0; line-height: 1.05; }
+
+/* ── Confetti overlay ─────────────────────────────────── */
+#confetti {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 60;
+}
+
+/* ── Hero + sunset scene ──────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 5vh 24px 5vh;
+  overflow: hidden;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(180deg,
+      var(--night) 0%,
+      var(--dusk) 26%,
+      var(--magenta) 52%,
+      var(--coral) 66%,
+      var(--amber) 76%,
+      var(--gold) 84%);
+}
+
+.sun {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: min(28vw, 200px);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #fff2c4 0%, var(--gold) 42%, var(--amber) 74%, rgba(255,158,66,0) 78%);
+  filter: saturate(1.1);
+  animation: sun-settle 1.6s cubic-bezier(.2,.7,.2,1) both;
+}
+
+/* shimmering reflection on the water */
+.shimmer {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(40vw, 300px);
+  height: 22%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, rgba(255,236,180,.65), rgba(255,180,120,0));
+  -webkit-mask-image: repeating-linear-gradient(180deg, #000 0 3px, transparent 3px 8px);
+  mask-image: repeating-linear-gradient(180deg, #000 0 3px, transparent 3px 8px);
+  animation: shimmer 3s ease-in-out infinite;
+  z-index: 1;
+}
+
+.sea {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 22%;
+  background: linear-gradient(180deg, #b8446a 0%, #5e1f5a 60%, var(--night) 100%);
+  z-index: 1;
+}
+
+.scene {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  width: 100%;
+  height: 46%;
+  z-index: 2;
+}
+
+.palm-left  { transform: translate(4vw, 42%) scale(1.15); transform-origin: bottom left; }
+.palm-right { transform: translate(1216px, 42%) scaleX(-1) scale(1.25); transform-origin: bottom left; }
+
+.yacht {
+  animation: sail 30s linear infinite;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 3;
+  max-width: 760px;
+  margin-bottom: 2vh; /* lift copy above the setting sun */
+}
+/* soft radial scrim so text stays legible over the bright gradient */
+.hero-copy::before {
+  content: "";
+  position: absolute;
+  inset: -12% -18%;
+  z-index: -1;
+  background: radial-gradient(60% 55% at 50% 46%, rgba(20,6,40,.5), rgba(20,6,40,0) 72%);
+  pointer-events: none;
+}
+
+.eyebrow {
+  font-family: var(--font-script);
+  font-size: clamp(1.3rem, 4vw, 2rem);
+  color: var(--sand);
+  margin: 0 0 .3em;
+  text-shadow: 0 2px 18px rgba(0,0,0,.35);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  display: grid;
+  gap: .02em;
+  text-shadow: 0 6px 30px rgba(20,4,40,.45);
+}
+.wordmark .line-1,
+.wordmark .line-3 { font-size: clamp(1.8rem, 6vw, 3.2rem); }
+.wordmark .cabo {
+  font-family: var(--font-script);
+  font-weight: 400;
+  text-transform: none;
+  font-size: clamp(3.6rem, 15vw, 7.4rem);
+  line-height: .9;
+  background: linear-gradient(180deg, #fff6e9, var(--gold) 70%, var(--amber));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 6px 24px rgba(255,140,60,.4));
+}
+
+.hero-meta {
+  font-weight: 600;
+  font-size: clamp(.95rem, 2.4vw, 1.15rem);
+  letter-spacing: .01em;
+  margin: 1.1em 0 .2em;
+  color: var(--sand);
+  text-shadow: 0 2px 16px rgba(20,4,40,.6);
+}
+.hero-meta .dot { opacity: .5; margin: 0 .5em; }
+
+.hero-tag {
+  color: var(--sand-dim);
+  font-size: clamp(1rem, 2.4vw, 1.2rem);
+  margin: .4em 0 0;
+  text-shadow: 0 2px 16px rgba(20,4,40,.6);
+}
+
+.cta {
+  display: inline-block;
+  margin-top: 1.8em;
+  padding: .85em 1.6em;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--gold), var(--amber));
+  box-shadow: 0 10px 30px rgba(255,158,66,.35);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.cta:hover { transform: translateY(-2px); box-shadow: 0 14px 38px rgba(255,158,66,.5); }
+
+/* ── Highlights ───────────────────────────────────────── */
+.highlights {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: clamp(48px, 8vw, 90px) 24px;
+}
+.highlights ul {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.highlights li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255,246,233,.06), rgba(255,246,233,.02));
+  border: 1px solid var(--card-brd);
+  font-weight: 500;
+}
+.highlights li .emoji { font-size: 1.9rem; line-height: 1; }
+
+/* ── RSVP card ────────────────────────────────────────── */
+.rsvp {
+  padding: 0 20px clamp(60px, 10vw, 120px);
+  display: flex;
+  justify-content: center;
+}
+.card {
+  width: 100%;
+  max-width: 560px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-brd);
+  border-radius: 26px;
+  padding: clamp(26px, 5vw, 44px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 30px 80px rgba(6, 2, 20, .5);
+}
+
+.badge {
+  display: inline-block;
+  font-size: .74rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: .4em .8em;
+  border-radius: 999px;
+  color: var(--gold);
+  background: rgba(255,209,102,.12);
+  border: 1px solid rgba(255,209,102,.3);
+}
+.badge-ok { color: var(--aqua); background: rgba(45,212,191,.12); border-color: rgba(45,212,191,.35); }
+
+.pane h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  margin: .5em 0 .25em;
+  letter-spacing: -.01em;
+}
+.pane-sub { color: var(--sand-dim); margin: 0 0 1.4em; line-height: 1.5; }
+.pane-center { text-align: center; }
+
+/* fields */
+.field { display: block; margin-bottom: 1em; }
+.field > span {
+  display: block;
+  font-size: .84rem;
+  font-weight: 500;
+  color: var(--sand-dim);
+  margin-bottom: .45em;
+}
+input, textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--sand);
+  background: rgba(12, 7, 34, .5);
+  border: 1px solid var(--card-brd);
+  border-radius: 12px;
+  padding: .8em .9em;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+input::placeholder, textarea::placeholder { color: rgba(233,221,207,.45); }
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(255,209,102,.22);
+}
+/* keep native date/time pickers legible on dark */
+input[type="date"], input[type="time"] { color-scheme: dark; }
+textarea { resize: vertical; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+@media (max-width: 460px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.flight-block {
+  margin: 1.2em 0;
+  padding: 1.1em 1.1em .4em;
+  border: 1px dashed var(--card-brd);
+  border-radius: 16px;
+}
+.flight-block h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: .9em;
+  color: var(--gold);
+}
+
+/* attending radios */
+.attending { border: none; padding: 0; margin: 0 0 .4em; }
+.attending legend { font-weight: 600; margin-bottom: .7em; padding: 0; }
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: .85em 1em;
+  margin-bottom: 10px;
+  border: 1px solid var(--card-brd);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.choice:hover { border-color: rgba(255,209,102,.45); }
+.choice input { width: auto; accent-color: var(--magenta); }
+.choice:has(input:checked) {
+  border-color: var(--gold);
+  background: rgba(255,209,102,.08);
+}
+
+/* buttons */
+.btn-primary {
+  width: 100%;
+  margin-top: .4em;
+  padding: .95em 1em;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--gold), var(--amber) 60%, var(--magenta));
+  box-shadow: 0 12px 30px rgba(255,90,140,.3);
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s;
+}
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-primary[disabled] { opacity: .6; cursor: progress; transform: none; }
+.btn-primary.loading .btn-label { visibility: hidden; }
+.btn-primary.loading::after {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 18px; height: 18px;
+  margin: -9px 0 0 -9px;
+  border: 2px solid rgba(12,7,34,.4);
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+.btn-primary { position: relative; }
+
+.btn-ghost {
+  margin-top: 1.2em;
+  padding: .7em 1.4em;
+  font: inherit;
+  font-weight: 500;
+  color: var(--sand);
+  background: transparent;
+  border: 1px solid var(--card-brd);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.btn-ghost:hover { border-color: var(--gold); }
+
+.form-error {
+  color: #ffb3b3;
+  font-size: .88rem;
+  margin: .2em 0 1em;
+}
+
+.success-emoji { font-size: 3rem; margin-bottom: .2em; }
+
+/* ── Footer ───────────────────────────────────────────── */
+.foot {
+  text-align: center;
+  padding: 40px 24px 60px;
+  color: var(--sand-dim);
+  font-size: .9rem;
+  opacity: .8;
+}
+
+/* ── Reveal-on-load ───────────────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: reveal .7s cubic-bezier(.2,.7,.2,1) forwards;
+}
+[data-reveal]:nth-child(1) { animation-delay: .15s; }
+[data-reveal]:nth-child(2) { animation-delay: .28s; }
+[data-reveal]:nth-child(3) { animation-delay: .45s; }
+[data-reveal]:nth-child(4) { animation-delay: .58s; }
+[data-reveal]:nth-child(5) { animation-delay: .7s; }
+
+/* ── Keyframes ────────────────────────────────────────── */
+@keyframes reveal { to { opacity: 1; transform: none; } }
+@keyframes sun-settle { from { transform: translateX(-50%) translateY(40px); opacity: 0; } to { transform: translateX(-50%); opacity: 1; } }
+@keyframes shimmer { 0%,100% { opacity: .5; transform: translateX(-50%) scaleY(1); } 50% { opacity: .85; transform: translateX(-50%) scaleY(1.12); } }
+@keyframes sail {
+  0%   { transform: translateX(72vw) translateY(0) rotate(-1deg); }
+  25%  { transform: translateX(48vw) translateY(-5px) rotate(1deg); }
+  50%  { transform: translateX(26vw) translateY(0) rotate(-1deg); }
+  75%  { transform: translateX(3vw)  translateY(-5px) rotate(1deg); }
+  100% { transform: translateX(-22vw) translateY(0) rotate(-1deg); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Reduced motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; scroll-behavior: auto; }
+  [data-reveal] { opacity: 1; transform: none; }
+  .sun { animation: none; }
+}

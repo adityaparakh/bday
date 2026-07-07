@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cabo Birthday — You're Invited</title>
+  <meta name="description" content="A private invitation. Yachts, sunsets, and dancing in Cabo San Lucas." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <!-- Confetti canvas sits above the sunset, below the content -->
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <!-- ── Hero ─────────────────────────────────────────── -->
+  <header class="hero">
+    <div class="sky" aria-hidden="true">
+      <div class="sun"></div>
+      <div class="shimmer"></div>
+      <div class="sea"></div>
+      <svg class="scene" viewBox="0 0 1440 320" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <!-- yacht -->
+        <g class="yacht">
+          <path d="M0 60 L120 60 L104 92 L20 92 Z" fill="#0c0722" />
+          <rect x="34" y="34" width="60" height="26" rx="3" fill="#0c0722" />
+          <path d="M60 6 L60 34 L92 34 Z" fill="#0c0722" />
+        </g>
+        <!-- palm, left -->
+        <g class="palm palm-left" fill="#0c0722">
+          <path d="M60 320 L74 150 L88 320 Z" />
+          <path d="M74 150 C40 120 8 128 -6 150 C30 138 56 146 74 158 Z" />
+          <path d="M74 150 C108 120 140 128 154 150 C118 138 92 146 74 158 Z" />
+          <path d="M74 150 C58 108 30 92 6 96 C42 104 60 126 74 158 Z" />
+          <path d="M74 150 C90 108 118 92 142 96 C106 104 88 126 74 158 Z" />
+        </g>
+        <!-- palm, right -->
+        <g class="palm palm-right" fill="#0c0722">
+          <path d="M60 320 L74 150 L88 320 Z" />
+          <path d="M74 150 C40 120 8 128 -6 150 C30 138 56 146 74 158 Z" />
+          <path d="M74 150 C108 120 140 128 154 150 C118 138 92 146 74 158 Z" />
+          <path d="M74 150 C58 108 30 92 6 96 C42 104 60 126 74 158 Z" />
+          <path d="M74 150 C90 108 118 92 142 96 C106 104 88 126 74 158 Z" />
+        </g>
+      </svg>
+    </div>
+
+    <div class="hero-copy">
+      <p class="eyebrow" data-reveal>You're invited to</p>
+      <h1 class="wordmark" data-reveal>
+        <span class="line-1" id="host-line">Aditya's</span>
+        <span class="cabo">Cabo</span>
+        <span class="line-3" id="occasion-line">Birthday</span>
+      </h1>
+      <p class="hero-meta" data-reveal>
+        <span id="dates-chip">Nov 14–17, 2026</span>
+        <span class="dot">•</span>
+        <span id="loc-chip">Cabo San Lucas, México</span>
+      </p>
+      <p class="hero-tag" id="tagline" data-reveal>Yachts, sunsets, and a whole lot of dancing.</p>
+      <a href="#rsvp" class="cta" data-reveal>Get your invite →</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- ── Highlights ─────────────────────────────────── -->
+    <section class="highlights" aria-label="What to expect">
+      <ul id="highlight-list"></ul>
+    </section>
+
+    <!-- ── RSVP ───────────────────────────────────────── -->
+    <section class="rsvp" id="rsvp">
+      <div class="card">
+
+        <!-- STATE 1: email gate -->
+        <div class="pane" id="gate">
+          <span class="badge">Private party</span>
+          <h2>Unlock your invite</h2>
+          <p class="pane-sub">This one's invite-only. Enter the email you were invited with to RSVP.</p>
+          <form id="gate-form" novalidate>
+            <label class="field">
+              <span>Your email</span>
+              <input type="email" id="gate-email" name="email" autocomplete="email"
+                     placeholder="you@email.com" required />
+            </label>
+            <p class="form-error" id="gate-error" role="alert" hidden></p>
+            <button type="submit" class="btn-primary" id="gate-submit">
+              <span class="btn-label">Unlock</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- STATE 2: RSVP form (hidden until unlocked) -->
+        <div class="pane" id="rsvp-pane" hidden>
+          <span class="badge badge-ok">You're on the list 🎉</span>
+          <h2 id="welcome-name">Let's get you on the boat</h2>
+          <p class="pane-sub">Tell us if you're in, and drop your flight details so we can plan pickups.</p>
+
+          <form id="rsvp-form" novalidate>
+            <fieldset class="attending">
+              <legend>Are you coming?</legend>
+              <label class="choice">
+                <input type="radio" name="attending" value="Yes" required />
+                <span>Hell yes, I'm in 🍹</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="attending" value="No" />
+                <span>Can't make it 😢</span>
+              </label>
+            </fieldset>
+
+            <div class="conditional" id="attending-fields" hidden>
+              <label class="field">
+                <span>Name</span>
+                <input type="text" name="name" id="rsvp-name" autocomplete="name" placeholder="Your name" />
+              </label>
+
+              <label class="field">
+                <span>How many in your party? (incl. you)</span>
+                <input type="number" name="partySize" min="1" max="10" value="1" inputmode="numeric" />
+              </label>
+
+              <div class="flight-block">
+                <h3>✈️ Arrival</h3>
+                <div class="grid-2">
+                  <label class="field"><span>Airline</span>
+                    <input type="text" name="arrivalAirline" placeholder="e.g. Alaska" /></label>
+                  <label class="field"><span>Flight #</span>
+                    <input type="text" name="arrivalFlight" placeholder="e.g. AS 1234" /></label>
+                  <label class="field"><span>Date</span>
+                    <input type="date" name="arrivalDate" /></label>
+                  <label class="field"><span>Arrival time (local)</span>
+                    <input type="time" name="arrivalTime" /></label>
+                </div>
+              </div>
+
+              <div class="flight-block">
+                <h3>🛫 Departure</h3>
+                <div class="grid-2">
+                  <label class="field"><span>Airline</span>
+                    <input type="text" name="departureAirline" placeholder="e.g. Alaska" /></label>
+                  <label class="field"><span>Flight #</span>
+                    <input type="text" name="departureFlight" placeholder="e.g. AS 4321" /></label>
+                  <label class="field"><span>Date</span>
+                    <input type="date" name="departureDate" /></label>
+                  <label class="field"><span>Departure time (local)</span>
+                    <input type="time" name="departureTime" /></label>
+                </div>
+              </div>
+
+              <label class="field">
+                <span>Anything else? (dietary, +1 names, song requests…)</span>
+                <textarea name="notes" rows="2" placeholder="Optional"></textarea>
+              </label>
+            </div>
+
+            <p class="form-error" id="rsvp-error" role="alert" hidden></p>
+            <button type="submit" class="btn-primary" id="rsvp-submit">
+              <span class="btn-label">Send RSVP</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- STATE 3: confirmation -->
+        <div class="pane pane-center" id="success" hidden>
+          <div class="success-emoji">🌴🛥️🌅</div>
+          <h2 id="success-title">You're locked in!</h2>
+          <p class="pane-sub" id="success-msg">See you in Cabo. We'll be in touch with the full itinerary.</p>
+          <button type="button" class="btn-ghost" id="edit-rsvp">Edit my details</button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Made with 🌅 for the crew · <span id="foot-loc">Cabo San Lucas</span></p>
+  </footer>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
