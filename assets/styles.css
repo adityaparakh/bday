@@ -472,6 +472,23 @@ textarea { resize: vertical; }
   .highlights li { padding: 16px 18px; }
   .flight-block { padding: 1em .9em .3em; }
   .card { border-radius: 22px; }
+
+  /* The wide sunset SVG is center-cropped on phones, so the palms and
+     yacht (positioned for the full desktop width) fall outside the frame.
+     Re-anchor them into the visible center band. */
+  .palm-left  { transform: translate(560px, 0) scale(0.72); }
+  .palm-right { transform: translate(880px, 0) scaleX(-1) scale(0.78); }
+  .yacht { animation-name: sail-mobile; }
+}
+
+/* yacht path tuned to the phone's visible band: enters from off-right,
+   crosses the screen, exits off-left (loop reset stays out of frame) */
+@keyframes sail-mobile {
+  0%   { transform: translateX(900px) translateY(132px) rotate(-1deg); }
+  25%  { transform: translateX(785px) translateY(126px) rotate(1deg); }
+  50%  { transform: translateX(670px) translateY(132px) rotate(-1deg); }
+  75%  { transform: translateX(555px) translateY(126px) rotate(1deg); }
+  100% { transform: translateX(440px) translateY(132px) rotate(-1deg); }
 }
 
 /* honor iOS safe areas (notch / home indicator) */
