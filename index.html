@@ -51,14 +51,14 @@
     <div class="hero-copy">
       <p class="eyebrow" data-reveal>You're invited to</p>
       <h1 class="wordmark" data-reveal>
-        <span class="line-1" id="host-line">Aditya's</span>
+        <span class="line-1" id="host-line">Aditya's 30th</span>
         <span class="cabo">Birthday</span>
         <span class="line-3" id="occasion-line">Escape</span>
       </h1>
       <p class="hero-meta" data-reveal>
-        <span id="dates-chip">Nov 14–17, 2026</span>
+        <span id="dates-chip">Oct 9–11, 2026</span>
         <span class="dot">•</span>
-        <span id="loc-chip">🤫 Destination is a surprise</span>
+        <span id="loc-chip">☀️ Somewhere warm — RSVP for the details</span>
       </p>
       <p class="hero-tag" id="tagline" data-reveal>Yachts, sunsets, and a whole lot of dancing.</p>
       <a href="#rsvp" class="cta" data-reveal>Get your invite →</a>
@@ -93,18 +93,47 @@
           </form>
         </div>
 
-        <!-- STATE 2: RSVP form (hidden until unlocked) -->
+        <!-- STATE 2: the reveal + trip dossier (hidden until unlocked) -->
         <div class="pane" id="rsvp-pane" hidden>
           <span class="badge badge-ok">You're on the list 🎉</span>
-          <h2 id="welcome-name">Let's get you there</h2>
+          <p class="greeting" id="welcome-name" hidden></p>
 
+          <!-- celebratory reveal animation -->
           <div class="reveal" id="reveal">
-            <span class="reveal-lead">Surprise — we're going to</span>
-            <strong class="reveal-place" id="reveal-place">🌴</strong>
-            <span class="reveal-when" id="reveal-when">Oct 9–11, 2026</span>
+            <span class="r-item r-woo">🎉</span>
+            <span class="r-item r-lead">We're going to</span>
+            <span class="r-item r-place" id="reveal-place">Cabo</span>
+            <span class="r-item r-sub">to celebrate <strong id="reveal-occasion">Adi's 30th</strong></span>
+            <span class="r-item r-when" id="reveal-when">Oct 9–11, 2026</span>
           </div>
 
-          <p class="pane-sub">Let us know if you're in, then drop your flight details so we can plan airport pickups.</p>
+          <!-- where you'll be staying (the generous bit) -->
+          <div class="info-card" id="stay-card">
+            <span class="info-ico">🛏️</span>
+            <div class="info-body">
+              <h3>Where you'll be staying</h3>
+              <p id="stay-note">Your room is already booked — and paid for.</p>
+              <p class="stay-hotel" id="stay-hotel"></p>
+            </div>
+          </div>
+
+          <!-- the journey / itinerary -->
+          <div class="journey" id="journey">
+            <p class="section-eyebrow">The weekend</p>
+            <ol class="timeline" id="timeline"></ol>
+          </div>
+
+          <!-- getting there -->
+          <div class="info-card" id="travel-card">
+            <span class="info-ico">✈️</span>
+            <div class="info-body">
+              <h3>Getting there</h3>
+              <p id="travel-note"></p>
+            </div>
+          </div>
+
+          <h2 class="rsvp-ask">Now — will you be there?</h2>
+          <p class="pane-sub">Let us know below, and drop your flight details so we can plan airport pickups.</p>
 
           <form id="rsvp-form" novalidate>
             <fieldset class="attending">

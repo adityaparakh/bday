@@ -18,16 +18,48 @@
     if (el && value != null) el.textContent = value;
   }
 
-  setText("host-line", (cfg.hostName || "The") + "'s");
+  var milestone = cfg.milestone ? " " + cfg.milestone : "";
+  setText("host-line", (cfg.hostName || "The") + "'s" + milestone);   // "Aditya's 30th"
   setText("occasion-line", cfg.occasion || "Escape");
   setText("dates-chip", cfg.dates);
-  // Public page keeps the destination secret — show the teaser, not the place.
-  setText("loc-chip", cfg.locationTeaser || "🤫 Destination is a surprise");
+  // First page keeps the destination off it — show the teaser, not the place.
+  setText("loc-chip", cfg.locationTeaser || "☀️ RSVP for the details");
   setText("tagline", cfg.tagline);
-  // The real destination is only revealed after a guest is through the gate.
-  setText("reveal-place", cfg.location);
-  setText("reveal-when", cfg.dates);
   document.title = "You're Invited 🌅";
+
+  // ── The reveal + trip details (populated now, shown after unlock) ──
+  setText("reveal-place", cfg.locationShort || cfg.location);
+  setText("reveal-occasion", (cfg.nickname || cfg.hostName || "the birthday") + "'s" + milestone);
+  setText("reveal-when", cfg.dates);
+
+  if (cfg.hotel) {
+    setText("stay-note", cfg.hotel.note);
+    var hotelEl = document.getElementById("stay-hotel");
+    if (hotelEl) {
+      hotelEl.innerHTML = "We'll be at <strong>" + escapeHtml(cfg.hotel.name || "the resort") + "</strong>" +
+        (cfg.location ? ", " + escapeHtml(cfg.location) : "") + ".";
+    }
+  }
+
+  var timeline = document.getElementById("timeline");
+  if (timeline && Array.isArray(cfg.itinerary)) {
+    timeline.innerHTML = "";
+    cfg.itinerary.forEach(function (c) {
+      var li = document.createElement("li");
+      li.className = "t-item";
+      li.innerHTML =
+        '<span class="t-day">' + escapeHtml(c.day || "") + "</span>" +
+        '<span class="t-title">' + escapeHtml(c.title || "") + "</span>" +
+        '<span class="t-detail">' + escapeHtml(c.detail || "") + "</span>";
+      timeline.appendChild(li);
+    });
+  }
+
+  if (cfg.travel) {
+    var tNote = cfg.travel.note || "";
+    if (cfg.travel.airport) tNote = "Nearest airport: " + cfg.travel.airport + ". " + tNote;
+    setText("travel-note", tNote);
+  }
 
   var list = document.getElementById("highlight-list");
   if (list && Array.isArray(cfg.highlights)) {
@@ -118,12 +150,22 @@
     successPane.hidden = true;
     rsvpPane.hidden = false;
     if (guestName) {
-      welcome.textContent = "Welcome, " + guestName.split(" ")[0] + "! 🌴";
+      welcome.textContent = "Hey " + guestName.split(" ")[0] + " 👋";
+      welcome.hidden = false;
       var nameInput = document.getElementById("rsvp-name");
       if (nameInput && !nameInput.value) nameInput.value = guestName;
     }
+    // kick off the celebratory reveal animation + confetti
+    var reveal = document.getElementById("reveal");
+    if (reveal) {
+      reveal.classList.remove("show");
+      void reveal.offsetWidth;   // force reflow so the animation restarts
+      reveal.classList.add("show");
+    }
     burstConfetti();
-    rsvpPane.scrollIntoView({ behavior: "smooth", block: "center" });
+    // a second confetti pop timed to the big destination word landing
+    if (!reduce) setTimeout(burstConfetti, 700);
+    rsvpPane.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   // ── Show/hide flight fields based on attendance ───────

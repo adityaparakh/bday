@@ -278,36 +278,104 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 .pane-sub { color: var(--sand-dim); margin: 0 0 1.4em; line-height: 1.5; }
 .pane-center { text-align: center; }
 
-/* destination reveal — shown only after a guest unlocks the invite */
+.greeting { color: var(--aqua); font-weight: 600; margin: .8em 0 0; }
+
+/* ── Celebratory reveal (after unlock) ─────────────────── */
 .reveal {
   display: flex;
   flex-direction: column;
-  gap: .18em;
+  align-items: center;
+  gap: .1em;
   text-align: center;
-  margin: 1.1em 0 1.5em;
-  padding: 1.1em 1em;
-  border-radius: 18px;
-  background: linear-gradient(135deg, rgba(255,209,102,.16), rgba(255,61,139,.16));
+  margin: 1em 0 1.6em;
+  padding: 1.4em 1em 1.5em;
+  border-radius: 20px;
+  background: linear-gradient(150deg, rgba(255,209,102,.18), rgba(255,61,139,.16));
   border: 1px solid rgba(255,209,102,.4);
+  overflow: hidden;
 }
-.reveal-lead {
-  font-size: .78rem;
-  font-weight: 600;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--sand-dim);
+.r-woo { font-size: 2rem; line-height: 1; }
+.r-lead {
+  font-size: .82rem; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--sand-dim); margin-top: .2em;
 }
-.reveal-place {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(1.5rem, 6vw, 2.1rem);
-  line-height: 1.1;
-  background: linear-gradient(180deg, var(--gold), var(--amber));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+.r-place {
+  font-family: var(--font-script);
+  font-size: clamp(3.2rem, 15vw, 5.4rem);
+  line-height: 1.02;
+  background: linear-gradient(180deg, #fff2c4, var(--gold) 55%, var(--amber));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 4px 18px rgba(255,140,60,.4));
 }
-.reveal-when { font-weight: 600; color: var(--sand); }
+.r-sub { font-size: 1.05rem; color: var(--sand); }
+.r-sub strong { color: var(--gold); }
+.r-when { font-weight: 600; color: var(--sand-dim); margin-top: .3em; }
+
+/* animation: each line pops in, the destination lands biggest */
+.reveal .r-item { opacity: 0; transform: translateY(10px); }
+.reveal.show .r-item { animation: pop .55s cubic-bezier(.2,1.2,.4,1) forwards; }
+.reveal.show .r-woo   { animation: woo .6s cubic-bezier(.2,1.4,.4,1) .05s forwards; }
+.reveal.show .r-lead  { animation-delay: .3s; }
+.reveal.show .r-place { animation: popbig .7s cubic-bezier(.2,1.5,.35,1) .55s forwards; }
+.reveal.show .r-sub   { animation-delay: 1.05s; }
+.reveal.show .r-when  { animation-delay: 1.3s; }
+
+@keyframes pop    { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes woo    { 0% { opacity: 0; transform: scale(.3) rotate(-15deg); } 70% { transform: scale(1.25) rotate(8deg); } 100% { opacity: 1; transform: none; } }
+@keyframes popbig { 0% { opacity: 0; transform: scale(.35); } 60% { opacity: 1; transform: scale(1.12); } 100% { opacity: 1; transform: scale(1); } }
+
+/* ── Info cards (where you'll stay / getting there) ────── */
+.info-card {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255,246,233,.06), rgba(255,246,233,.02));
+  border: 1px solid var(--card-brd);
+}
+#stay-card { border-color: rgba(45,212,191,.34); background: linear-gradient(150deg, rgba(45,212,191,.12), rgba(45,212,191,.03)); }
+.info-ico { font-size: 1.6rem; line-height: 1.2; flex: none; }
+.info-body h3 {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 1.05rem; margin: 0 0 .3em;
+}
+.info-body p { margin: 0; color: var(--sand-dim); line-height: 1.5; font-size: .95rem; }
+.stay-hotel { margin-top: .4em !important; color: var(--sand) !important; }
+.stay-hotel strong { color: var(--aqua); }
+
+/* ── The journey / itinerary ───────────────────────────── */
+.journey { margin: 22px 0 20px; }
+.section-eyebrow {
+  font-size: .74rem; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--gold); margin: 0 0 .9em;
+}
+.timeline { list-style: none; margin: 0; padding: 0; }
+.t-item {
+  position: relative;
+  padding: 0 0 20px 26px;
+  border-left: 2px solid rgba(255,209,102,.28);
+}
+.t-item:last-child { border-left-color: transparent; padding-bottom: 0; }
+.t-item::before {
+  content: "";
+  position: absolute; left: -8px; top: 2px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--amber));
+  box-shadow: 0 0 0 4px rgba(255,209,102,.15);
+}
+.t-day {
+  display: block; font-size: .76rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--aqua);
+}
+.t-title {
+  display: block; font-family: var(--font-display); font-weight: 700;
+  font-size: 1.15rem; margin: .1em 0 .25em; color: var(--sand);
+}
+.t-detail { display: block; color: var(--sand-dim); line-height: 1.5; font-size: .95rem; }
+
+.rsvp-ask { margin-top: .4em; }
 
 /* fields */
 .field { display: block; margin-bottom: 1em; }
@@ -502,5 +570,6 @@ textarea { resize: vertical; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; scroll-behavior: auto; }
   [data-reveal] { opacity: 1; transform: none; }
+  .reveal .r-item { opacity: 1 !important; transform: none !important; }
   .sun { animation: none; }
 }
