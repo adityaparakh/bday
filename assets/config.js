@@ -22,7 +22,7 @@ window.INVITE_CONFIG = {
   // Paste your Google Apps Script Web App URL here after you deploy it
   // (see README.md → step 3). Until then the form runs in DEMO mode
   // and won't save anything.
-  appsScriptUrl: "",
+  appsScriptUrl: "https://script.google.com/macros/s/AKfycbxzyUG7XGcRktCgNsMaj66CuH2lltyMBuGyC_TVd5YXFtuc5WjcWksAJH4J839Fds946w/exec",
 
   // The vibe checklist shown under the hero.
   highlights: [
