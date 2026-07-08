@@ -38,11 +38,34 @@ window.INVITE_CONFIG = {
     ],
   },
 
-  // The weekend, told as chapters (your "journey"). Add/remove freely.
+  // The weekend, told as chapters (your "journey").
+  // Each day has timed `items`; `tag` shows a little pill (optional / formal / TBD).
   itinerary: [
-    { day: "Fri · Oct 9",  title: "The Arrival",   detail: "Fly in, settle into the resort, and a welcome dinner + drinks as the crew rolls in." },
-    { day: "Sat · Oct 10", title: "Out to Sea",    detail: "The main event — a private yacht day on the water, sunset cocktails, then dancing well into the night." },
-    { day: "Sun · Oct 11", title: "The Send-off",  detail: "A slow brunch and pool time, then flights home whenever you're ready." },
+    {
+      day: "Fri · Oct 9", title: "Arrive & set sail",
+      items: [
+        { time: "By noon", text: "Be there — check in & settle" },
+        { time: "Lunch",   text: "Grab a bite", tag: "optional" },
+        { time: "4:00 pm", text: "Yacht + swimming in the ocean 🛥️" },
+        { time: "Evening", text: "Dinner on the yacht" },
+      ],
+    },
+    {
+      day: "Sat · Oct 10", title: "Adventures & the big night",
+      items: [
+        { time: "9–11 am",   text: "Breakfast", tag: "optional" },
+        { time: "Midday",    text: "Off to adventures", tag: "TBD" },
+        { time: "7:00 pm",   text: "Dinner", tag: "formal" },
+        { time: "10:00 pm+", text: "Night out 🪩" },
+      ],
+    },
+    {
+      day: "Sun · Oct 11", title: "The Send-off",
+      items: [
+        { time: "Morning", text: "Breakfast", tag: "optional" },
+        { time: "Anytime", text: "Fly home ✈️" },
+      ],
+    },
   ],
 
   // Getting there — flows into the flight-details form.

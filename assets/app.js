@@ -72,10 +72,21 @@
     cfg.itinerary.forEach(function (c) {
       var li = document.createElement("li");
       li.className = "t-item";
-      li.innerHTML =
+      var html =
         '<span class="t-day">' + escapeHtml(c.day || "") + "</span>" +
-        '<span class="t-title">' + escapeHtml(c.title || "") + "</span>" +
-        '<span class="t-detail">' + escapeHtml(c.detail || "") + "</span>";
+        '<span class="t-title">' + escapeHtml(c.title || "") + "</span>";
+      if (Array.isArray(c.items) && c.items.length) {
+        html += '<ul class="t-sched">' + c.items.map(function (it) {
+          var tag = it.tag
+            ? ' <em class="tag tag-' + escapeHtml(String(it.tag).toLowerCase()) + '">' + escapeHtml(it.tag) + "</em>"
+            : "";
+          return '<li><span class="t-time">' + escapeHtml(it.time || "") + "</span>" +
+                 '<span class="t-what">' + escapeHtml(it.text || "") + tag + "</span></li>";
+        }).join("") + "</ul>";
+      } else if (c.detail) {
+        html += '<span class="t-detail">' + escapeHtml(c.detail) + "</span>";
+      }
+      li.innerHTML = html;
       timeline.appendChild(li);
     });
   }
