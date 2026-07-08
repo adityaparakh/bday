@@ -49,22 +49,12 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
   z-index: 60;
 }
 
-/* ── Hero + sunset scene ──────────────────────────────── */
-.hero {
-  position: relative;
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 5vh 24px 5vh;
-  overflow: hidden;
-}
-
-.sky {
-  position: absolute;
+/* ── Persistent sunset backdrop ───────────────────────── */
+.backdrop {
+  position: fixed;
   inset: 0;
   z-index: 0;
+  overflow: hidden;
   background:
     linear-gradient(180deg,
       var(--night) 0%,
@@ -73,6 +63,44 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
       var(--coral) 66%,
       var(--amber) 76%,
       var(--gold) 84%);
+}
+
+/* ── The deck (one slide visible at a time) ───────────── */
+.deck-progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  z-index: 50;
+  background: rgba(12, 7, 34, .35);
+}
+.deck-progress .bar {
+  display: block;
+  height: 100%;
+  width: 12%;
+  background: linear-gradient(90deg, var(--gold), var(--amber), var(--magenta));
+  border-radius: 0 4px 4px 0;
+  transition: width .5s cubic-bezier(.2,.7,.2,1);
+}
+
+.deck {
+  position: relative;
+  z-index: 2;
+}
+
+.slide {
+  min-height: 100svh;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: max(6vh, 34px) 20px max(6vh, 40px);
+}
+.slide.is-active { display: flex; }
+.slide.is-active > * { animation: slide-in .5s cubic-bezier(.2,.7,.2,1) both; }
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(22px) scale(.985); }
+  to   { opacity: 1; transform: none; }
 }
 
 .sun {
@@ -200,10 +228,12 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 .cta {
   display: inline-block;
   margin-top: 1.8em;
-  padding: .85em 1.6em;
+  padding: .9em 1.7em;
+  border: none;
   border-radius: 999px;
+  font: inherit;
   font-weight: 600;
-  text-decoration: none;
+  cursor: pointer;
   color: var(--ink);
   background: linear-gradient(135deg, var(--gold), var(--amber));
   box-shadow: 0 10px 30px rgba(255,158,66,.35);
@@ -211,48 +241,71 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 }
 .cta:hover { transform: translateY(-2px); box-shadow: 0 14px 38px rgba(255,158,66,.5); }
 
-/* ── Highlights ───────────────────────────────────────── */
-.highlights {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: clamp(48px, 8vw, 90px) 24px;
-}
-.highlights ul {
+/* ── Vibe list (highlight cards inside a slide) ───────── */
+.vibe-list {
   list-style: none;
-  margin: 0; padding: 0;
+  margin: .4em 0 0; padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  gap: 12px;
+  text-align: left;
 }
-.highlights li {
+.vibe-list li {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 20px 22px;
-  border-radius: 18px;
+  padding: 15px 18px;
+  border-radius: 16px;
   background: linear-gradient(180deg, rgba(255,246,233,.06), rgba(255,246,233,.02));
   border: 1px solid var(--card-brd);
   font-weight: 500;
 }
-.highlights li .emoji { font-size: 1.9rem; line-height: 1; }
+.vibe-list li .emoji { font-size: 1.7rem; line-height: 1; }
 
-/* ── RSVP card ────────────────────────────────────────── */
-.rsvp {
-  padding: 0 20px clamp(60px, 10vw, 120px);
-  display: flex;
-  justify-content: center;
-}
+/* ── Cards ────────────────────────────────────────────── */
 .card {
   width: 100%;
-  max-width: 560px;
+  max-width: 540px;
+  text-align: left;
   background: var(--card-bg);
   border: 1px solid var(--card-brd);
   border-radius: 26px;
-  padding: clamp(26px, 5vw, 44px);
+  padding: clamp(24px, 5vw, 40px);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 30px 80px rgba(6, 2, 20, .5);
 }
+.card.pane-center { text-align: center; }
+
+/* navigation between slides */
+.nav-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 1.5em;
+}
+.nav-row .btn-primary { margin-top: 0; width: auto; flex: 1; }
+.nav-row.single { justify-content: center; }
+.btn-back {
+  flex: none;
+  padding: .7em 1.1em;
+  font: inherit;
+  font-weight: 500;
+  color: var(--sand-dim);
+  background: transparent;
+  border: 1px solid var(--card-brd);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.btn-back:hover { border-color: var(--gold); color: var(--sand); }
+.btn-back.subtle {
+  display: block;
+  margin: 1.1em auto 0;
+  border: none;
+  color: var(--sand-dim);
+  opacity: .8;
+}
+.btn-back.subtle:hover { color: var(--gold); }
 
 .badge {
   display: inline-block;
@@ -268,7 +321,7 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 }
 .badge-ok { color: var(--aqua); background: rgba(45,212,191,.12); border-color: rgba(45,212,191,.35); }
 
-.pane h2 {
+.card h2 {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: clamp(1.6rem, 5vw, 2.2rem);
@@ -533,11 +586,10 @@ textarea { resize: vertical; }
 
 /* ── Mobile refinements ───────────────────────────────── */
 @media (max-width: 560px) {
-  .hero { padding: 4vh 18px 4vh; }
+  .slide { padding: max(5vh, 30px) 16px max(5vh, 34px); }
   .hero-meta { flex-direction: column; gap: 4px; }
   .hero-meta .dot { display: none; }
-  .highlights { padding-top: 44px; padding-bottom: 44px; }
-  .highlights li { padding: 16px 18px; }
+  .vibe-list li { padding: 14px 16px; }
   .flight-block { padding: 1em .9em .3em; }
   .card { border-radius: 22px; }
 
@@ -561,9 +613,11 @@ textarea { resize: vertical; }
 
 /* honor iOS safe areas (notch / home indicator) */
 @supports (padding: max(0px)) {
-  .hero { padding-left: max(18px, env(safe-area-inset-left)); padding-right: max(18px, env(safe-area-inset-right)); }
-  .rsvp, .highlights { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
-  .foot { padding-bottom: max(60px, env(safe-area-inset-bottom)); }
+  .slide {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-bottom: max(6vh, env(safe-area-inset-bottom));
+  }
 }
 
 /* ── Reduced motion ───────────────────────────────────── */

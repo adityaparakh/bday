@@ -1,5 +1,6 @@
 /* ─────────────────────────────────────────────────────────────
    Birthday Escape Invite — front-end logic
+   - a stepped "deck": one slide at a time, Next/Back to move through
    - injects config into the page
    - email gate → backend allowlist check
    - RSVP + flight details → backend save
@@ -22,12 +23,11 @@
   setText("host-line", (cfg.hostName || "The") + "'s" + milestone);   // "Aditya's 30th"
   setText("occasion-line", cfg.occasion || "Escape");
   setText("dates-chip", cfg.dates);
-  // First page keeps the destination off it — show the teaser, not the place.
   setText("loc-chip", cfg.locationTeaser || "☀️ RSVP for the details");
   setText("tagline", cfg.tagline);
   document.title = "You're Invited 🌅";
 
-  // ── The reveal + trip details (populated now, shown after unlock) ──
+  // The reveal + trip details (populated now, shown after unlock)
   setText("reveal-place", cfg.locationShort || cfg.location);
   setText("reveal-occasion", (cfg.nickname || cfg.hostName || "the birthday") + "'s" + milestone);
   setText("reveal-when", cfg.dates);
@@ -72,31 +72,89 @@
   }
 
   // ── Element refs ──────────────────────────────────────
-  var gate = document.getElementById("gate");
   var gateForm = document.getElementById("gate-form");
   var gateEmail = document.getElementById("gate-email");
   var gateError = document.getElementById("gate-error");
   var gateSubmit = document.getElementById("gate-submit");
 
-  var rsvpPane = document.getElementById("rsvp-pane");
   var rsvpForm = document.getElementById("rsvp-form");
   var rsvpError = document.getElementById("rsvp-error");
   var rsvpSubmit = document.getElementById("rsvp-submit");
   var welcome = document.getElementById("welcome-name");
   var attendingFields = document.getElementById("attending-fields");
 
-  var successPane = document.getElementById("success");
   var successTitle = document.getElementById("success-title");
   var successMsg = document.getElementById("success-msg");
   var editBtn = document.getElementById("edit-rsvp");
+  var progressBar = document.getElementById("progress-bar");
 
   var guestEmail = "";
   var guestName = "";
 
+  // ── The deck ──────────────────────────────────────────
+  var STEPS = ["hero", "vibe", "gate", "reveal", "stay", "weekend", "travel", "rsvp", "success"];
+  var slides = {};
+  document.querySelectorAll(".slide").forEach(function (s) { slides[s.dataset.step] = s; });
+  var currentIndex = 0;
+
+  function goTo(step) {
+    var idx = STEPS.indexOf(step);
+    if (idx < 0) return;
+    currentIndex = idx;
+    STEPS.forEach(function (name) {
+      var s = slides[name];
+      if (!s) return;
+      var on = name === step;
+      s.classList.toggle("is-active", on);
+      if (on) s.removeAttribute("hidden");
+      else s.setAttribute("hidden", "");
+    });
+    if (progressBar) progressBar.style.width = ((idx + 1) / STEPS.length * 100) + "%";
+    window.scrollTo(0, 0);
+    onEnter(step);
+  }
+
+  function next() {
+    var step = STEPS[currentIndex];
+    if (step === "gate" || step === "rsvp") return;   // these advance only on submit
+    goTo(STEPS[Math.min(currentIndex + 1, STEPS.length - 1)]);
+  }
+  function back() {
+    goTo(STEPS[Math.max(currentIndex - 1, 0)]);
+  }
+
+  function onEnter(step) {
+    if (step === "reveal") runReveal();
+    if (step === "gate") setTimeout(function () { gateEmail.focus(); }, 80);
+  }
+
+  document.querySelectorAll("[data-next]").forEach(function (b) { b.addEventListener("click", next); });
+  document.querySelectorAll("[data-back]").forEach(function (b) { b.addEventListener("click", back); });
+
+  // keyboard: ← / → to move (ignored while typing)
+  document.addEventListener("keydown", function (e) {
+    var tag = (document.activeElement && document.activeElement.tagName) || "";
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(tag)) return;
+    if (e.key === "ArrowRight") next();
+    else if (e.key === "ArrowLeft") back();
+  });
+
+  // touch swipe (horizontal-dominant only, so it won't fight scrolling)
+  var tx = 0, ty = 0;
+  document.addEventListener("touchstart", function (e) {
+    tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY;
+  }, { passive: true });
+  document.addEventListener("touchend", function (e) {
+    var dx = e.changedTouches[0].clientX - tx;
+    var dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.8) {
+      if (dx < 0) next(); else back();
+    }
+  }, { passive: true });
+
   // ── Backend call (text/plain avoids CORS preflight) ───
   function callBackend(payload) {
     if (DEMO) {
-      // Demo mode: pretend everyone whose email contains a "@" is invited.
       return new Promise(function (resolve) {
         setTimeout(function () {
           if (payload.action === "check") {
@@ -134,10 +192,16 @@
         if (!res.allowed) {
           return showError(gateError, "Hmm, that email isn't on the guest list. Double-check it, or ping " + (cfg.hostName || "the host") + ".");
         }
-        // unlocked
+        // unlocked → move into the reveal
         guestEmail = email;
         guestName = res.name || "";
-        openRsvp();
+        if (guestName) {
+          welcome.textContent = "Hey " + guestName.split(" ")[0] + " 👋";
+          welcome.hidden = false;
+          var nameInput = document.getElementById("rsvp-name");
+          if (nameInput && !nameInput.value) nameInput.value = guestName;
+        }
+        goTo("reveal");
       })
       .catch(function () {
         loading(gateSubmit, false);
@@ -145,17 +209,7 @@
       });
   });
 
-  function openRsvp() {
-    gate.hidden = true;
-    successPane.hidden = true;
-    rsvpPane.hidden = false;
-    if (guestName) {
-      welcome.textContent = "Hey " + guestName.split(" ")[0] + " 👋";
-      welcome.hidden = false;
-      var nameInput = document.getElementById("rsvp-name");
-      if (nameInput && !nameInput.value) nameInput.value = guestName;
-    }
-    // kick off the celebratory reveal animation + confetti
+  function runReveal() {
     var reveal = document.getElementById("reveal");
     if (reveal) {
       reveal.classList.remove("show");
@@ -163,16 +217,14 @@
       reveal.classList.add("show");
     }
     burstConfetti();
-    // a second confetti pop timed to the big destination word landing
+    // a second pop timed to the big destination word landing
     if (!reduce) setTimeout(burstConfetti, 700);
-    rsvpPane.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   // ── Show/hide flight fields based on attendance ───────
   rsvpForm.addEventListener("change", function (e) {
     if (e.target.name === "attending") {
-      var coming = e.target.value === "Yes";
-      attendingFields.hidden = !coming;
+      attendingFields.hidden = e.target.value !== "Yes";
     }
   });
 
@@ -218,24 +270,18 @@
   });
 
   function showSuccess(attending) {
-    rsvpPane.hidden = true;
-    successPane.hidden = false;
     if (attending === "Yes") {
       successTitle.textContent = "You're locked in! 🎉";
       successMsg.textContent = "See you in " + (cfg.location || "paradise") + ". We'll send the full itinerary soon.";
-      burstConfetti();
     } else {
       successTitle.textContent = "We'll miss you 💛";
       successMsg.textContent = "Thanks for letting us know. If plans change, come back and update your RSVP.";
     }
-    successPane.scrollIntoView({ behavior: "smooth", block: "center" });
+    goTo("success");
+    if (attending === "Yes") burstConfetti();
   }
 
-  editBtn.addEventListener("click", function () {
-    successPane.hidden = true;
-    rsvpPane.hidden = false;
-    rsvpPane.scrollIntoView({ behavior: "smooth", block: "center" });
-  });
+  editBtn.addEventListener("click", function () { goTo("rsvp"); });
 
   // ── Small UI helpers ──────────────────────────────────
   function loading(btn, on) {
