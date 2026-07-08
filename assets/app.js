@@ -32,13 +32,38 @@
   setText("reveal-occasion", (cfg.nickname || cfg.hostName || "the birthday") + "'s" + milestone);
   setText("reveal-when", cfg.dates);
 
-  if (cfg.hotel) {
-    setText("stay-note", cfg.hotel.note);
-    var hotelEl = document.getElementById("stay-hotel");
-    if (hotelEl) {
-      hotelEl.innerHTML = "We'll be at <strong>" + escapeHtml(cfg.hotel.name || "the resort") + "</strong>" +
-        (cfg.location ? ", " + escapeHtml(cfg.location) : "") + ".";
+  var H = cfg.hotel;
+  if (H) {
+    setText("stay-note", H.note);
+    setText("hotel-name", H.name);
+    setText("hotel-blurb", H.blurb);
+    setText("hotel-address", H.address);
+    setText("hotel-phone", H.phone);
+
+    var gal = document.getElementById("hotel-gallery");
+    if (gal && H.photos && H.photos.length) {
+      var main = H.photos[0];
+      var html = '<img class="hotel-hero-img" src="' + main.src + '" alt="' + escapeHtml(main.alt || "") + '" loading="lazy" />';
+      var thumbs = H.photos.slice(1);
+      if (thumbs.length) {
+        html += '<div class="hotel-thumbs">' + thumbs.map(function (p) {
+          return '<img src="' + p.src + '" alt="' + escapeHtml(p.alt || "") + '" loading="lazy" />';
+        }).join("") + "</div>";
+      }
+      gal.innerHTML = html;
     }
+
+    var chips = document.getElementById("amenity-chips");
+    if (chips && H.amenities) {
+      chips.innerHTML = H.amenities.map(function (a) { return "<li>" + escapeHtml(a) + "</li>"; }).join("");
+    }
+
+    var mapLink = document.getElementById("hotel-map-link");
+    if (mapLink && H.mapsUrl) mapLink.href = H.mapsUrl;
+    var mapBtn = document.getElementById("hotel-map-btn");
+    if (mapBtn && H.mapsUrl) mapBtn.href = H.mapsUrl;
+    var phoneLink = document.getElementById("hotel-phone-link");
+    if (phoneLink && H.phoneHref) phoneLink.href = "tel:" + H.phoneHref;
   }
 
   var timeline = document.getElementById("timeline");
@@ -126,6 +151,15 @@
   function onEnter(step) {
     if (step === "reveal") runReveal();
     if (step === "gate") setTimeout(function () { gateEmail.focus(); }, 80);
+    if (step === "stay") loadMap();
+  }
+
+  // Load the map iframe only when the guest reaches the "stay" slide.
+  function loadMap() {
+    var f = document.getElementById("hotel-map");
+    if (f && cfg.hotel && cfg.hotel.mapEmbed && !f.getAttribute("src")) {
+      f.setAttribute("src", cfg.hotel.mapEmbed);
+    }
   }
 
   document.querySelectorAll("[data-next]").forEach(function (b) { b.addEventListener("click", next); });

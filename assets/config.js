@@ -21,9 +21,21 @@ window.INVITE_CONFIG = {
 
   // Where everyone's staying — the generous bit 🎉
   hotel: {
-    name: "the [Your Resort Name]",     // ← put the real hotel here
-    // The reassuring line. Edit freely.
-    note: "Your room is already booked — and paid for. Just get yourself there and we'll handle the rest.",
+    name: "The Westin Los Cabos Resort Villas – Baja Point",
+    note: "Your room is already booked — and paid for. Just get yourself there; we'll handle the rest.",
+    blurb: "Our home base: a cliffside villa resort perched right over the Sea of Cortez — infinity pools, a private beach, a full spa, and six restaurants.",
+    amenities: ["🏖️ Private beach", "🏊 Infinity pools", "💆 Spa Otomí", "🍽️ 6 restaurants"],
+    address: "Carretera Transpeninsular KM 22.5, San José del Cabo, B.C.S. 23400, México",
+    phone: "+52 624 142 9000",
+    phoneHref: "+526241429000",
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=The%20Westin%20Los%20Cabos%20Resort%20Villas%20Baja%20Point",
+    mapEmbed: "https://www.google.com/maps?q=The%20Westin%20Los%20Cabos%20Resort%20Villas%20Baja%20Point&z=13&output=embed",
+    website: "https://www.marriott.com/en-us/hotels/sjdwb-the-westin-los-cabos-resort-villas-baja-point/overview/",
+    photos: [
+      { src: "assets/img/hotel-hero.jpg", alt: "The Westin Los Cabos on the cliffs above the beach" },
+      { src: "assets/img/hotel-pool.jpg", alt: "Infinity pool at sunset over the Sea of Cortez" },
+      { src: "assets/img/hotel-exterior.jpg", alt: "Resort villas exterior" },
+    ],
   },
 
   // The weekend, told as chapters (your "journey"). Add/remove freely.

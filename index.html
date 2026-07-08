@@ -124,14 +124,34 @@
     <!-- 5 · Where you'll stay -->
     <section class="slide" data-step="stay" hidden>
       <div class="card">
+        <p class="section-eyebrow">Home base</p>
+        <div class="hotel-gallery" id="hotel-gallery"></div>
+
+        <h2 class="hotel-name" id="hotel-name">Where you'll be staying</h2>
+        <p class="hotel-blurb" id="hotel-blurb"></p>
+
         <div class="info-card" id="stay-card">
           <span class="info-ico">🛏️</span>
           <div class="info-body">
-            <h3>Where you'll be staying</h3>
             <p id="stay-note">Your room is already booked — and paid for.</p>
-            <p class="stay-hotel" id="stay-hotel"></p>
           </div>
         </div>
+
+        <ul class="amenity-chips" id="amenity-chips"></ul>
+
+        <div class="hotel-contact">
+          <a class="hotel-line" id="hotel-map-link" target="_blank" rel="noopener">
+            <span class="hl-ico">📍</span><span id="hotel-address"></span>
+          </a>
+          <a class="hotel-line" id="hotel-phone-link">
+            <span class="hl-ico">📞</span><span id="hotel-phone"></span>
+          </a>
+        </div>
+
+        <iframe class="hotel-map" id="hotel-map" title="Map to the resort"
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <a class="map-btn" id="hotel-map-btn" target="_blank" rel="noopener">📍 Open in Google Maps →</a>
+
         <div class="nav-row">
           <button type="button" class="btn-back" data-back>← Back</button>
           <button type="button" class="btn-primary" data-next><span class="btn-label">Next →</span></button>

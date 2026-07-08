@@ -395,8 +395,83 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
   font-size: 1.05rem; margin: 0 0 .3em;
 }
 .info-body p { margin: 0; color: var(--sand-dim); line-height: 1.5; font-size: .95rem; }
-.stay-hotel { margin-top: .4em !important; color: var(--sand) !important; }
-.stay-hotel strong { color: var(--aqua); }
+
+/* ── Hotel card (where you'll stay) ────────────────────── */
+.hotel-gallery { margin: .4em 0 1.1em; }
+.hotel-hero-img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+  box-shadow: 0 14px 34px rgba(6, 2, 20, .45);
+}
+.hotel-thumbs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.hotel-thumbs img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+.hotel-name {
+  font-size: clamp(1.35rem, 4.4vw, 1.7rem) !important;
+  margin: 0 0 .35em !important;
+}
+.hotel-blurb { color: var(--sand-dim); line-height: 1.55; margin: 0 0 1.1em; }
+
+.amenity-chips {
+  list-style: none;
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 0 0 1.2em; padding: 0;
+}
+.amenity-chips li {
+  font-size: .82rem; font-weight: 500;
+  padding: .45em .8em;
+  border-radius: 999px;
+  color: var(--sand);
+  background: rgba(255,246,233,.06);
+  border: 1px solid var(--card-brd);
+}
+
+.hotel-contact { display: grid; gap: 8px; margin-bottom: 1.1em; }
+.hotel-line {
+  display: flex; gap: 10px; align-items: flex-start;
+  color: var(--sand); text-decoration: none;
+  font-size: .92rem; line-height: 1.45;
+  padding: .4em 0;
+}
+.hotel-line .hl-ico { flex: none; }
+.hotel-line:hover { color: var(--gold); }
+
+.hotel-map {
+  width: 100%;
+  height: 180px;
+  border: 1px solid var(--card-brd);
+  border-radius: 14px 14px 0 0;
+  border-bottom: none;
+  display: block;
+  background: rgba(12, 7, 34, .5);
+}
+.map-btn {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: .92rem;
+  color: var(--sand);
+  padding: .8em 1em;
+  border: 1px solid var(--card-brd);
+  border-radius: 0 0 14px 14px;
+  background: rgba(255,246,233,.05);
+  transition: background .15s, color .15s;
+}
+.map-btn:hover { background: rgba(255,209,102,.1); color: var(--gold); }
 
 /* ── The journey / itinerary ───────────────────────────── */
 .journey { margin: 22px 0 20px; }
