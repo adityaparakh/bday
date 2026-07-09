@@ -42,22 +42,22 @@ window.INVITE_CONFIG = {
   // Each day has timed `items`; `tag` shows a little pill (optional / formal / TBD).
   itinerary: [
     {
-      day: "Fri · Oct 9", title: "Land & first night",
+      day: "Fri · Oct 9", title: "Arrivals & night one",
       items: [
-        { time: "By 3:00 pm", text: "Arrive & check in" },
-        { time: "If early",   text: "Lunch, then pool, basketball, tennis or pickleball", tag: "optional" },
-        { time: "6:00 pm",    text: "Dinner" },
-        { time: "Evening",    text: "Nightlife out in Cabo 🪩" },
+        { time: "By 3 pm",   text: "Fly in and check in (earlier is welcome!)" },
+        { time: "Afternoon", text: "Settle in: pool, basketball, tennis, pickleball, or lunch", tag: "optional" },
+        { time: "6:00 pm",   text: "Dinner together" },
+        { time: "Evening",   text: "First night out in Cabo 🍸" },
       ],
     },
     {
-      day: "Sat · Oct 10", title: "The main event",
+      day: "Sat · Oct 10", title: "The big day & night two",
       items: [
         { time: "Morning",  text: "Breakfast + hotel time", tag: "optional" },
         { time: "12-4 pm",  text: "Sightsee Cabo city" },
         { time: "1:00 pm",  text: "Taco & tequila tasting 🌮" },
         { time: "4:00 pm",  text: "Yacht on the water 🛥️" },
-        { time: "Evening",  text: "Nightlife out in Cabo 🪩" },
+        { time: "Evening",  text: "Second night out in Cabo 🪩" },
       ],
     },
     {
