@@ -129,7 +129,6 @@
   var rsvpSubmit = document.getElementById("rsvp-submit");
   var welcome = document.getElementById("welcome-name");
   var guestList = document.getElementById("guest-list");
-  var addGuestBtn = document.getElementById("add-guest");
   var partyNotes = document.getElementById("party-notes");
   var guestTpl = document.getElementById("guest-card-tpl");
 
@@ -474,13 +473,6 @@
     if (err) { err.hidden = true; err.textContent = ""; }
   }
 
-  addGuestBtn.addEventListener("click", function () {
-    addGuestCard({}, true);
-    var cards = guestList.querySelectorAll(".guest-card");
-    var last = cards[cards.length - 1];
-    if (last) last.querySelector(".g-name").focus();
-    saveDraft();
-  });
 
   // ── RSVP draft: snapshot the form to this device as they edit ──
   function currentDraft() {
