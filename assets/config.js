@@ -45,7 +45,7 @@ window.INVITE_CONFIG = {
       day: "Fri · Oct 9", title: "Arrivals & night one",
       items: [
         { time: "By 3 pm",   text: "Fly in and check in (earlier is welcome!)" },
-        { time: "Afternoon", text: "Settle in: pool, basketball, tennis, pickleball, or lunch", tag: "optional" },
+        { time: "Afternoon", text: "Free time to do your thing: pool, basketball, tennis, pickleball, or lunch", tag: "optional" },
         { time: "6:00 pm",   text: "Dinner together" },
         { time: "Evening",   text: "First night out in Cabo 🍸" },
       ],
