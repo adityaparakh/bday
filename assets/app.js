@@ -13,6 +13,21 @@
   var cfg = window.INVITE_CONFIG || {};
   var DEMO = !cfg.appsScriptUrl;
 
+  // ── Local persistence (remember email + save RSVP draft) ──
+  // All wrapped in try/catch so private mode / disabled storage never breaks.
+  var STORE = {
+    read: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    write: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+    remove: function (k) { try { localStorage.removeItem(k); } catch (e) {} },
+  };
+  var EMAIL_KEY = "bday.email";
+  function draftKey(email) { return "bday.draft." + (email || ""); }
+  function savedEmail() { return STORE.read(EMAIL_KEY) || ""; }
+  function rememberEmail(v) { v ? STORE.write(EMAIL_KEY, v) : STORE.remove(EMAIL_KEY); }
+  function getDraft(email) { try { return JSON.parse(STORE.read(draftKey(email)) || "null"); } catch (e) { return null; } }
+  function setDraft(email, d) { STORE.write(draftKey(email), JSON.stringify(d)); }
+  function clearDraft(email) { STORE.remove(draftKey(email)); }
+
   // ── Populate content from config ──────────────────────
   function setText(id, value) {
     var el = document.getElementById(id);
@@ -20,7 +35,7 @@
   }
 
   var milestone = cfg.milestone ? " " + cfg.milestone : "";
-  setText("host-line", (cfg.hostName || "The") + "'s" + milestone);   // "Aditya's 30th"
+  setText("host-line", (cfg.hostName || "The") + "'s" + milestone);   // "Adi's 30th"
   setText("occasion-line", cfg.occasion || "Escape");
   setText("dates-chip", cfg.dates);
   setText("loc-chip", cfg.locationTeaser || "☀️ RSVP for the details");
@@ -107,15 +122,19 @@
   var rsvpError = document.getElementById("rsvp-error");
   var rsvpSubmit = document.getElementById("rsvp-submit");
   var welcome = document.getElementById("welcome-name");
-  var attendingFields = document.getElementById("attending-fields");
+  var guestList = document.getElementById("guest-list");
+  var addGuestBtn = document.getElementById("add-guest");
+  var partyNotes = document.getElementById("party-notes");
+  var guestTpl = document.getElementById("guest-card-tpl");
 
   var successTitle = document.getElementById("success-title");
   var successMsg = document.getElementById("success-msg");
   var editBtn = document.getElementById("edit-rsvp");
   var progressBar = document.getElementById("progress-bar");
 
-  var guestEmail = "";
-  var guestName = "";
+  var guestEmail = "";     // the email they unlocked with
+  var guestGreet = "";     // name to greet them by (their own row)
+  var uid = 0;             // unique-ish counter for radio-group names
 
   // ── The deck ──────────────────────────────────────────
   var STEPS = ["hero", "gate", "reveal", "stay", "weekend", "travel", "rsvp", "success"];
@@ -123,34 +142,41 @@
   document.querySelectorAll(".slide").forEach(function (s) { slides[s.dataset.step] = s; });
   var currentIndex = 0;
 
-  function goTo(step) {
-    var idx = STEPS.indexOf(step);
-    if (idx < 0) return;
-    currentIndex = idx;
-    STEPS.forEach(function (name) {
-      var s = slides[name];
-      if (!s) return;
+  // goTo works for any slide, including the side-screens (confirmed, faq)
+  // that live outside the linear STEPS progression.
+  function goTo(step, opts) {
+    if (!slides[step]) return;
+    opts = opts || {};
+    Object.keys(slides).forEach(function (name) {
+      var el = slides[name];
+      if (!el) return;
       var on = name === step;
-      s.classList.toggle("is-active", on);
-      if (on) s.removeAttribute("hidden");
-      else s.setAttribute("hidden", "");
+      el.classList.toggle("is-active", on);
+      if (on) el.removeAttribute("hidden");
+      else el.setAttribute("hidden", "");
     });
-    if (progressBar) progressBar.style.width = ((idx + 1) / STEPS.length * 100) + "%";
+    currentIndex = STEPS.indexOf(step);   // -1 for side-screens
+    if (progressBar) {
+      if (currentIndex >= 0) progressBar.style.width = ((currentIndex + 1) / STEPS.length * 100) + "%";
+      else if (step === "confirmed") progressBar.style.width = "100%";
+    }
     window.scrollTo(0, 0);
-    onEnter(step);
+    onEnter(step, opts);
   }
 
   function next() {
+    if (currentIndex < 0) return;                     // side-screens use their own buttons
     var step = STEPS[currentIndex];
     if (step === "gate" || step === "rsvp") return;   // these advance only on submit
     goTo(STEPS[Math.min(currentIndex + 1, STEPS.length - 1)]);
   }
   function back() {
+    if (currentIndex < 0) return;
     goTo(STEPS[Math.max(currentIndex - 1, 0)]);
   }
 
-  function onEnter(step) {
-    if (step === "reveal") runReveal();
+  function onEnter(step, opts) {
+    if (step === "reveal") runReveal(opts.silent);
     if (step === "gate") setTimeout(function () { gateEmail.focus(); }, 80);
     if (step === "stay") loadMap();
   }
@@ -165,6 +191,34 @@
 
   document.querySelectorAll("[data-next]").forEach(function (b) { b.addEventListener("click", next); });
   document.querySelectorAll("[data-back]").forEach(function (b) { b.addEventListener("click", back); });
+  document.querySelectorAll("[data-goto]").forEach(function (b) {
+    b.addEventListener("click", function () { goTo(b.getAttribute("data-goto")); });
+  });
+
+  // FAQ can be opened from a few places; remember where to return to.
+  var faqReturn = "confirmed";
+  document.querySelectorAll("[data-faq]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var active = document.querySelector(".slide.is-active");
+      faqReturn = (active && active.dataset.step) || "confirmed";
+      goTo("faq");
+    });
+  });
+  var faqBack = document.getElementById("faq-back");
+  if (faqBack) faqBack.addEventListener("click", function () { goTo(faqReturn); });
+
+  var notYou = document.getElementById("not-you");
+  if (notYou) notYou.addEventListener("click", resetIdentity);
+
+  function resetIdentity() {
+    if (guestEmail) clearDraft(guestEmail);
+    rememberEmail("");
+    guestEmail = "";
+    guestGreet = "";
+    if (gateEmail) gateEmail.value = "";
+    if (welcome) welcome.hidden = true;
+    goTo("gate");
+  }
 
   // keyboard: ← / → to move (ignored while typing)
   document.addEventListener("keydown", function (e) {
@@ -193,7 +247,16 @@
       return new Promise(function (resolve) {
         setTimeout(function () {
           if (payload.action === "check") {
-            resolve({ ok: true, allowed: /@/.test(payload.email), name: "" });
+            var done = /done|rsvpd/.test(payload.email);   // demo: pretend this party already RSVP'd
+            resolve({
+              ok: true, allowed: /@/.test(payload.email), party: "demo",
+              greetName: "Adi", notes: done ? "No nut allergies, please." : "",
+              alreadyRsvped: done,
+              guests: [
+                { row: 2, name: "Adi", attending: done ? "Yes" : "" },
+                { row: 3, name: "Andrea", attending: done ? "No" : "" },
+              ],
+            });
           } else {
             resolve({ ok: true, allowed: true, saved: true });
           }
@@ -227,16 +290,18 @@
         if (!res.allowed) {
           return showError(gateError, "Hmm, that email isn't on the guest list. Double-check it, or ping " + (cfg.hostName || "the host") + ".");
         }
-        // unlocked → move into the reveal
+        // unlocked
         guestEmail = email;
-        guestName = res.name || "";
-        if (guestName) {
-          welcome.textContent = "Hey " + guestName.split(" ")[0] + " 👋";
-          welcome.hidden = false;
-          var nameInput = document.getElementById("rsvp-name");
-          if (nameInput && !nameInput.value) nameInput.value = guestName;
+        rememberEmail(email);
+        guestGreet = res.greetName || "";
+        applyGreeting();
+        renderParty(res.guests || [], res.notes || "");
+        if (res.alreadyRsvped) {
+          renderConfirmed(res.guests || []);
+          goTo("confirmed");
+        } else {
+          goTo("reveal");
         }
-        goTo("reveal");
       })
       .catch(function () {
         loading(gateSubmit, false);
@@ -244,23 +309,170 @@
       });
   });
 
-  function runReveal() {
+  function runReveal(silent) {
     var reveal = document.getElementById("reveal");
     if (reveal) {
       reveal.classList.remove("show");
       void reveal.offsetWidth;   // force reflow so the animation restarts
       reveal.classList.add("show");
     }
+    if (silent) return;          // returning visitor: replay the text, skip the confetti
     burstConfetti();
     // a second pop timed to the big destination word landing
     if (!reduce) setTimeout(burstConfetti, 700);
   }
 
-  // ── Show/hide flight fields based on attendance ───────
-  rsvpForm.addEventListener("change", function (e) {
-    if (e.target.name === "attending") {
-      attendingFields.hidden = e.target.value !== "Yes";
+  function applyGreeting() {
+    if (guestGreet) {
+      welcome.textContent = "Hey " + guestGreet.split(" ")[0] + " 👋";
+      welcome.hidden = false;
+    } else {
+      welcome.hidden = true;
     }
+  }
+
+  // ── Party rendering (editable guest list) ─────────────
+  // If the guest has an unsaved draft on this device, it wins over what the
+  // backend returned (the backend omits flight times for privacy, so the
+  // draft is the only place their typed flights survive a refresh).
+  function renderParty(guests, notes) {
+    var draft = guestEmail ? getDraft(guestEmail) : null;
+    var src = (draft && draft.guests && draft.guests.length) ? draft.guests : guests;
+    var noteVal = draft ? (draft.notes || "") : (notes || "");
+
+    guestList.innerHTML = "";
+    if (!src.length) addGuestCard({}, true);          // always show at least one row
+    src.forEach(function (g) { addGuestCard(g, !g.row); });  // rows without a row# are removable +1s
+    if (partyNotes) partyNotes.value = noteVal;
+  }
+
+  // ── Confirmed summary (returning guest who already RSVP'd) ──
+  function renderConfirmed(guests) {
+    var named = (guests || []).filter(function (g) { return String(g.name || "").trim(); });
+    var first = guestGreet ? guestGreet.split(" ")[0] : "";
+    setText("confirmed-greet", first ? "You're all set, " + first + "!" : "You're all set!");
+
+    var list = document.getElementById("confirmed-party");
+    if (list) {
+      list.innerHTML = named.map(function (g) {
+        var st = g.attending === "Yes" ? { c: "is-in", t: "In 🍹" }
+               : g.attending === "No" ? { c: "is-out", t: "Can't make it" }
+               : { c: "is-none", t: "No response yet" };
+        return '<li class="cp-row"><span class="cp-name">' + escapeHtml(g.name) +
+               '</span><span class="cp-status ' + st.c + '">' + st.t + "</span></li>";
+      }).join("");
+    }
+    var coming = named.filter(function (g) { return g.attending === "Yes"; }).length;
+    setText("confirmed-count", coming ? (coming + (coming === 1 ? " person" : " people") + " coming 🌴") : "");
+    setText("confirmed-recap", [cfg.locationShort || cfg.location, cfg.dates, cfg.hotel && cfg.hotel.name]
+      .filter(Boolean).join("  ·  "));
+  }
+
+  // ── FAQ (config-driven, native accordion) ─────────────
+  function renderFaq() {
+    var wrap = document.getElementById("faq-list");
+    if (!wrap || !Array.isArray(cfg.faq)) return;
+    wrap.innerHTML = cfg.faq.map(function (f) {
+      return '<details class="faq-item"><summary>' + escapeHtml(f.q) +
+             "</summary><p>" + escapeHtml(f.a) + "</p></details>";
+    }).join("");
+  }
+
+  function addGuestCard(g, isNew) {
+    g = g || {};
+    var frag = guestTpl.content.cloneNode(true);
+    var card = frag.querySelector(".guest-card");
+    if (g.row) card.dataset.row = g.row;
+
+    var groupName = "att-" + (uid++);
+    var inChoice = card.querySelector(".g-in");
+    var outChoice = card.querySelector(".g-out");
+    inChoice.name = outChoice.name = groupName;
+
+    card.querySelector(".g-name").value = g.name || "";
+    card.querySelector(".g-af").value = g.arrivalFlight || "";
+    card.querySelector(".g-at").value = g.arrivalTime || "";
+    card.querySelector(".g-df").value = g.departureFlight || "";
+    card.querySelector(".g-dt").value = g.departureTime || "";
+
+    if (g.attending === "Yes") {
+      inChoice.checked = true;
+      card.querySelector(".g-flights").hidden = false;
+    } else if (g.attending === "No") {
+      outChoice.checked = true;
+    }
+
+    // form-added guests can be removed; roster guests just toggle "out"
+    if (isNew) card.querySelector(".g-remove").hidden = false;
+
+    guestList.appendChild(frag);
+  }
+
+  // Each card shows/hides its own flight block from its In/Out choice
+  guestList.addEventListener("change", function (e) {
+    var card = e.target.closest(".guest-card");
+    if (!card) return;
+    if (e.target.classList.contains("g-in") || e.target.classList.contains("g-out")) {
+      card.querySelector(".g-flights").hidden = !card.querySelector(".g-in").checked;
+    }
+    clearCardError(card);       // editing a card clears its validation state
+  });
+  guestList.addEventListener("input", function (e) {
+    var card = e.target.closest(".guest-card");
+    if (card) clearCardError(card);
+  });
+
+  guestList.addEventListener("click", function (e) {
+    var btn = e.target.closest(".g-remove");
+    if (btn) btn.closest(".guest-card").remove();
+  });
+
+  // ── Per-guest validation helpers ──────────────────────
+  function badCard(card, highlightEl, msg) {
+    card.classList.add("invalid");
+    if (highlightEl) highlightEl.classList.add("invalid");
+    var err = card.querySelector(".g-error");
+    if (err) { err.textContent = msg; err.hidden = false; }
+  }
+  function clearCardError(card) {
+    card.classList.remove("invalid");
+    card.querySelectorAll(".invalid").forEach(function (el) { el.classList.remove("invalid"); });
+    var err = card.querySelector(".g-error");
+    if (err) { err.hidden = true; err.textContent = ""; }
+  }
+
+  addGuestBtn.addEventListener("click", function () {
+    addGuestCard({}, true);
+    var cards = guestList.querySelectorAll(".guest-card");
+    var last = cards[cards.length - 1];
+    if (last) last.querySelector(".g-name").focus();
+    saveDraft();
+  });
+
+  // ── RSVP draft: snapshot the form to this device as they edit ──
+  function currentDraft() {
+    var cards = Array.prototype.slice.call(guestList.querySelectorAll(".guest-card"));
+    return {
+      guests: cards.map(function (card) {
+        return {
+          row: card.dataset.row || "",
+          name: card.querySelector(".g-name").value,
+          attending: card.querySelector(".g-in").checked ? "Yes"
+                   : (card.querySelector(".g-out").checked ? "No" : ""),
+          arrivalFlight: card.querySelector(".g-af").value,
+          arrivalTime: card.querySelector(".g-at").value,
+          departureFlight: card.querySelector(".g-df").value,
+          departureTime: card.querySelector(".g-dt").value,
+        };
+      }),
+      notes: partyNotes ? partyNotes.value : "",
+    };
+  }
+  function saveDraft() { if (guestEmail) setDraft(guestEmail, currentDraft()); }
+  rsvpForm.addEventListener("input", saveDraft);
+  rsvpForm.addEventListener("change", saveDraft);
+  guestList.addEventListener("click", function (e) {   // removing a +1 also updates the draft
+    if (e.target.closest(".g-remove")) saveDraft();
   });
 
   // ── RSVP submit ───────────────────────────────────────
@@ -268,35 +480,67 @@
     e.preventDefault();
     hideError(rsvpError);
 
-    var fd = new FormData(rsvpForm);
-    var attending = fd.get("attending");
-    if (!attending) {
-      return showError(rsvpError, "Let us know if you're coming first!");
+    var cards = Array.prototype.slice.call(guestList.querySelectorAll(".guest-card"));
+    var guests = [];
+    var anyYes = false;
+    var firstBad = null;
+
+    cards.forEach(function (card) {
+      clearCardError(card);
+      var nameEl = card.querySelector(".g-name");
+      var nm = nameEl.value.trim();
+      var inC = card.querySelector(".g-in").checked;
+      var outC = card.querySelector(".g-out").checked;
+      var answered = inC || outC;
+
+      if (!nm && !answered) return;                   // untouched row — skip
+
+      if (!nm) {
+        firstBad = firstBad || nameEl;
+        return badCard(card, nameEl, "Add a name, or clear this row.");
+      }
+      if (!answered) {
+        firstBad = firstBad || card.querySelector(".g-in");
+        return badCard(card, card.querySelector(".g-attend"),
+          "Let us know if " + nm.split(" ")[0] + " is in or out.");
+      }
+
+      var at = card.querySelector(".g-at").value;
+      var dt = card.querySelector(".g-dt").value;
+      if (inC && at && dt && dt <= at) {
+        firstBad = firstBad || card.querySelector(".g-dt");
+        return badCard(card, card.querySelector(".g-dt"),
+          "Departure is before arrival — check the times.");
+      }
+
+      if (inC) anyYes = true;
+      guests.push({
+        row: card.dataset.row || "",
+        name: nm,
+        attending: inC ? "Yes" : "No",
+        arrivalFlight: card.querySelector(".g-af").value.trim(),
+        arrivalTime: at,
+        departureFlight: card.querySelector(".g-df").value.trim(),
+        departureTime: dt,
+      });
+    });
+
+    if (firstBad) {
+      firstBad.focus();
+      return showError(rsvpError, "Please fix the highlighted fields above.");
+    }
+    if (!guests.length) {
+      return showError(rsvpError, "Add at least one name so we know who's coming.");
     }
 
-    var data = {
-      name: (fd.get("name") || guestName || "").trim(),
-      attending: attending,
-      partySize: attending === "Yes" ? (fd.get("partySize") || "") : "",
-      arrivalAirline: fd.get("arrivalAirline") || "",
-      arrivalFlight: fd.get("arrivalFlight") || "",
-      arrivalDate: fd.get("arrivalDate") || "",
-      arrivalTime: fd.get("arrivalTime") || "",
-      departureAirline: fd.get("departureAirline") || "",
-      departureFlight: fd.get("departureFlight") || "",
-      departureDate: fd.get("departureDate") || "",
-      departureTime: fd.get("departureTime") || "",
-      notes: fd.get("notes") || "",
-    };
-
     loading(rsvpSubmit, true);
-    callBackend({ action: "rsvp", email: guestEmail, data: data })
+    callBackend({ action: "rsvp", email: guestEmail, guests: guests, notes: partyNotes.value || "" })
       .then(function (res) {
         loading(rsvpSubmit, false);
         if (!res || !res.ok) {
           return showError(rsvpError, (res && res.error) || "Couldn't save that. Try again.");
         }
-        showSuccess(attending);
+        showSuccess(anyYes);
       })
       .catch(function () {
         loading(rsvpSubmit, false);
@@ -304,8 +548,8 @@
       });
   });
 
-  function showSuccess(attending) {
-    if (attending === "Yes") {
+  function showSuccess(anyYes) {
+    if (anyYes) {
       successTitle.textContent = "You're locked in! 🎉";
       successMsg.textContent = "See you in " + (cfg.location || "paradise") + ". We'll send the full itinerary soon.";
     } else {
@@ -313,10 +557,33 @@
       successMsg.textContent = "Thanks for letting us know. If plans change, come back and update your RSVP.";
     }
     goTo("success");
-    if (attending === "Yes") burstConfetti();
+    if (anyYes) burstConfetti();
   }
 
   editBtn.addEventListener("click", function () { goTo("rsvp"); });
+
+  renderFaq();
+
+  // ── Returning visitor: silently restore from a remembered email ──
+  (function restore() {
+    var saved = savedEmail();
+    if (!saved) return;
+    callBackend({ action: "check", email: saved })
+      .then(function (res) {
+        if (!res || !res.ok || !res.allowed) { rememberEmail(""); return; } // removed from list
+        guestEmail = saved;
+        guestGreet = res.greetName || "";
+        applyGreeting();
+        renderParty(res.guests || [], res.notes || "");
+        if (res.alreadyRsvped) {
+          renderConfirmed(res.guests || []);
+          goTo("confirmed");
+        } else {
+          goTo("reveal", { silent: true });
+        }
+      })
+      .catch(function () { /* offline: just leave them on the cover */ });
+  })();
 
   // ── Small UI helpers ──────────────────────────────────
   function loading(btn, on) {

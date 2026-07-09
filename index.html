@@ -54,7 +54,7 @@
       <div class="hero-copy">
         <p class="eyebrow" data-reveal>You're invited to</p>
         <h1 class="wordmark" data-reveal>
-          <span class="line-1" id="host-line">Aditya's 30th</span>
+          <span class="line-1" id="host-line">Adi's 30th</span>
           <span class="cabo">Birthday</span>
           <span class="line-3" id="occasion-line">Escape</span>
         </h1>
@@ -177,66 +177,17 @@
     <!-- 8 · RSVP + flights -->
     <section class="slide" data-step="rsvp" hidden>
       <div class="card">
-        <h2 class="rsvp-ask">So, will you be there?</h2>
-        <p class="pane-sub">Let us know below, and drop your flight details so we can plan airport pickups.</p>
+        <h2 class="rsvp-ask">Who's coming?</h2>
+        <p class="pane-sub">We pulled your party from the guest list. Please make sure every name is spelled correctly (we hand this list to the airport shuttles for pickup), mark who's in, and add each person's flight details.</p>
 
         <form id="rsvp-form" novalidate>
-          <fieldset class="attending">
-            <legend>Are you coming?</legend>
-            <label class="choice">
-              <input type="radio" name="attending" value="Yes" required />
-              <span>Hell yes, I'm in 🍹</span>
-            </label>
-            <label class="choice">
-              <input type="radio" name="attending" value="No" />
-              <span>Can't make it 😢</span>
-            </label>
-          </fieldset>
+          <div id="guest-list"></div>
+          <button type="button" class="btn-ghost add-guest" id="add-guest">＋ Add someone</button>
 
-          <div class="conditional" id="attending-fields" hidden>
-            <label class="field">
-              <span>Name</span>
-              <input type="text" name="name" id="rsvp-name" autocomplete="name" placeholder="Your name" />
-            </label>
-
-            <label class="field">
-              <span>How many in your party? (incl. you)</span>
-              <input type="number" name="partySize" min="1" max="10" value="1" inputmode="numeric" />
-            </label>
-
-            <div class="flight-block">
-              <h3>✈️ Arrival</h3>
-              <div class="grid-2">
-                <label class="field"><span>Airline</span>
-                  <input type="text" name="arrivalAirline" placeholder="e.g. Alaska" /></label>
-                <label class="field"><span>Flight #</span>
-                  <input type="text" name="arrivalFlight" placeholder="e.g. AS 1234" /></label>
-                <label class="field"><span>Date</span>
-                  <input type="date" name="arrivalDate" /></label>
-                <label class="field"><span>Arrival time (local)</span>
-                  <input type="time" name="arrivalTime" /></label>
-              </div>
-            </div>
-
-            <div class="flight-block">
-              <h3>🛫 Departure</h3>
-              <div class="grid-2">
-                <label class="field"><span>Airline</span>
-                  <input type="text" name="departureAirline" placeholder="e.g. Alaska" /></label>
-                <label class="field"><span>Flight #</span>
-                  <input type="text" name="departureFlight" placeholder="e.g. AS 4321" /></label>
-                <label class="field"><span>Date</span>
-                  <input type="date" name="departureDate" /></label>
-                <label class="field"><span>Departure time (local)</span>
-                  <input type="time" name="departureTime" /></label>
-              </div>
-            </div>
-
-            <label class="field">
-              <span>Anything else? (dietary, +1 names, song requests…)</span>
-              <textarea name="notes" rows="2" placeholder="Optional"></textarea>
-            </label>
-          </div>
+          <label class="field party-notes-field">
+            <span>Anything else for the group? (dietary needs, song requests…)</span>
+            <textarea name="notes" id="party-notes" rows="2" maxlength="300" placeholder="Optional"></textarea>
+          </label>
 
           <p class="form-error" id="rsvp-error" role="alert" hidden></p>
           <button type="submit" class="btn-primary" id="rsvp-submit">
@@ -247,6 +198,33 @@
       </div>
     </section>
 
+    <!-- Template for one guest row (cloned by app.js) -->
+    <template id="guest-card-tpl">
+      <div class="guest-card">
+        <div class="guest-head">
+          <input type="text" class="g-name" autocomplete="name" maxlength="80" placeholder="Guest name" />
+          <button type="button" class="g-remove" title="Remove" aria-label="Remove guest" hidden>✕</button>
+        </div>
+        <fieldset class="attending g-attend">
+          <label class="choice"><input type="radio" class="g-in" value="Yes" /><span>In 🍹</span></label>
+          <label class="choice"><input type="radio" class="g-out" value="No" /><span>Can't make it 😢</span></label>
+        </fieldset>
+        <div class="g-flights" hidden>
+          <div class="grid-2">
+            <label class="field"><span>Arrival flight</span>
+              <input type="text" class="g-af" maxlength="40" placeholder="e.g. AS 1234" /></label>
+            <label class="field"><span>Arrival time</span>
+              <input type="datetime-local" class="g-at" /></label>
+            <label class="field"><span>Departure flight</span>
+              <input type="text" class="g-df" maxlength="40" placeholder="e.g. AS 4321" /></label>
+            <label class="field"><span>Departure time</span>
+              <input type="datetime-local" class="g-dt" /></label>
+          </div>
+        </div>
+        <p class="g-error" role="alert" hidden></p>
+      </div>
+    </template>
+
     <!-- 9 · Confirmation -->
     <section class="slide" data-step="success" hidden>
       <div class="card pane-center">
@@ -254,6 +232,38 @@
         <h2 id="success-title">You're locked in!</h2>
         <p class="pane-sub" id="success-msg">We'll be in touch with the full itinerary.</p>
         <button type="button" class="btn-ghost" id="edit-rsvp">Edit my details</button>
+        <button type="button" class="btn-back subtle" data-faq>Questions? Read the FAQ</button>
+      </div>
+    </section>
+
+    <!-- 10 · Already-RSVP'd summary (shown when a guest returns) -->
+    <section class="slide" data-step="confirmed" hidden>
+      <div class="card">
+        <span class="badge badge-ok">RSVP received ✅</span>
+        <h2 id="confirmed-greet">You're all set!</h2>
+        <p class="pane-sub">Here's your party. You can update it anytime before the trip.</p>
+
+        <ul class="confirmed-party" id="confirmed-party"></ul>
+        <p class="confirmed-count" id="confirmed-count"></p>
+
+        <div class="recap" id="confirmed-recap"></div>
+
+        <div class="stack-actions">
+          <button type="button" class="btn-primary" data-goto="rsvp"><span class="btn-label">Update our RSVP</span></button>
+          <button type="button" class="btn-back" data-goto="reveal">See the trip details →</button>
+          <button type="button" class="btn-back" data-faq>Questions? Read the FAQ</button>
+        </div>
+        <button type="button" class="btn-back subtle" id="not-you">Not you? Use a different email</button>
+      </div>
+    </section>
+
+    <!-- 11 · FAQ -->
+    <section class="slide" data-step="faq" hidden>
+      <div class="card">
+        <p class="section-eyebrow">Good to know</p>
+        <h2>FAQ</h2>
+        <div class="faq-list" id="faq-list"></div>
+        <button type="button" class="btn-back subtle" id="faq-back">← Back</button>
       </div>
     </section>
 

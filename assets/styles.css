@@ -525,6 +525,54 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 
 .rsvp-ask { margin-top: .4em; }
 
+/* ── Confirmed summary (returning guest) ───────────────── */
+.confirmed-party { list-style: none; margin: .4em 0 .6em; padding: 0; display: grid; gap: 8px; }
+.cp-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,246,233,.06), rgba(255,246,233,.02));
+  border: 1px solid var(--card-brd);
+}
+.cp-name { font-weight: 600; }
+.cp-status {
+  flex: none; font-size: .8rem; font-weight: 600;
+  padding: .3em .7em; border-radius: 999px; white-space: nowrap;
+}
+.cp-status.is-in   { color: var(--aqua); background: rgba(45,212,191,.12); border: 1px solid rgba(45,212,191,.32); }
+.cp-status.is-out  { color: var(--sand-dim); background: rgba(255,246,233,.06); border: 1px solid var(--card-brd); }
+.cp-status.is-none { color: var(--gold); background: rgba(255,209,102,.1); border: 1px solid rgba(255,209,102,.3); }
+.confirmed-count { color: var(--sand-dim); font-weight: 600; margin: 0 0 1.1em; }
+
+.recap {
+  text-align: center; color: var(--sand); font-weight: 600; line-height: 1.5;
+  padding: 12px 14px; margin-bottom: 1.3em;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255,209,102,.14), rgba(255,61,139,.12));
+  border: 1px solid rgba(255,209,102,.3);
+}
+
+.stack-actions { display: grid; gap: 10px; }
+.stack-actions .btn-primary { width: 100%; margin-top: 0; }
+.stack-actions .btn-back { width: 100%; }
+#not-you { display: block; margin: 1.2em auto 0; }
+
+/* ── FAQ (native accordion) ────────────────────────────── */
+.faq-list { display: grid; gap: 10px; margin: .4em 0; }
+.faq-item {
+  border: 1px solid var(--card-brd); border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,246,233,.05), rgba(255,246,233,.02));
+  overflow: hidden;
+}
+.faq-item > summary {
+  list-style: none; cursor: pointer;
+  padding: 14px 16px; font-weight: 600; color: var(--sand);
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.faq-item > summary::-webkit-details-marker { display: none; }
+.faq-item > summary::after { content: "+"; color: var(--gold); font-size: 1.3rem; line-height: 1; flex: none; }
+.faq-item[open] > summary::after { content: "–"; }
+.faq-item > p { margin: 0; padding: 0 16px 14px; color: var(--sand-dim); line-height: 1.55; }
+
 /* fields */
 .field { display: block; margin-bottom: 1em; }
 .field > span {
@@ -551,7 +599,7 @@ input:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(255,209,102,.22);
 }
 /* keep native date/time pickers legible on dark */
-input[type="date"], input[type="time"] { color-scheme: dark; }
+input[type="date"], input[type="time"], input[type="datetime-local"] { color-scheme: dark; }
 textarea { resize: vertical; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
@@ -591,6 +639,50 @@ textarea { resize: vertical; }
   border-color: var(--gold);
   background: rgba(255,209,102,.08);
 }
+
+/* editable party guest list */
+.guest-card {
+  padding: 1.1em 1.1em .5em;
+  margin-bottom: 1em;
+  border: 1px solid var(--card-brd);
+  border-radius: 18px;
+  background: rgba(12, 7, 34, .28);
+}
+.guest-head { display: flex; align-items: center; gap: 10px; margin-bottom: .9em; }
+.g-name {
+  flex: 1;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+.g-remove {
+  flex: 0 0 auto;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  font-size: .9rem; line-height: 1;
+  color: var(--sand-dim);
+  background: transparent;
+  border: 1px solid var(--card-brd);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.g-remove:hover { color: var(--magenta); border-color: var(--magenta); }
+/* In / Out choices sit side by side inside a card */
+.g-attend { display: flex; gap: 10px; margin: 0 0 .2em; }
+.g-attend .choice { flex: 1; margin: 0; padding: .7em .8em; justify-content: center; }
+.g-flights { margin-top: 1em; }
+.add-guest { margin: .2em 0 1.4em; }
+.party-notes-field { margin-top: .4em; }
+
+/* validation state */
+input.invalid, textarea.invalid {
+  border-color: #ff8a8a;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, .18);
+}
+.guest-card.invalid { border-color: rgba(255, 107, 107, .5); }
+.g-attend.invalid .choice { border-color: #ff8a8a; }
+.g-error { color: #ffb3b3; font-size: .84rem; margin: .6em 0 .1em; }
 
 /* buttons */
 .btn-primary {

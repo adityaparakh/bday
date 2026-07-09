@@ -4,7 +4,7 @@
 
 window.INVITE_CONFIG = {
   // ── The basics (shown on the public first page) ──────────────
-  hostName: "Aditya",        // used in the hero: "Aditya's 30th"
+  hostName: "Adi",           // the name shown throughout: "Adi's 30th"
   nickname: "Adi",           // used in the reveal: "Adi's 30th"
   milestone: "30th",         // the birthday number ("30th", "25th"…)
   occasion: "Escape",        // the teaser word under the wordmark
@@ -74,7 +74,18 @@ window.INVITE_CONFIG = {
     note: "Fly into SJD, about 40 minutes from the resort. Drop your flight times below and we'll sort out airport pickups.",
   },
 
+  // FAQ (shown to guests who've already RSVP'd, and from the confirmation).
+  // Edit / add / remove freely.
+  faq: [
+    { q: "Is my room really covered?", a: "Yes. Your room at the resort is booked and paid for. You just cover your flights and anything you spend there." },
+    { q: "What should I pack?", a: "Swimwear, warm-weather clothes, and something a little dressy for Saturday dinner. Don't forget your passport." },
+    { q: "How do I get from the airport?", a: "Add your flight times to your RSVP and we'll arrange a shuttle. The resort is about 40 minutes from SJD." },
+    { q: "Can I bring someone?", a: "Add them to your RSVP with the “Add someone” button and we'll sort out the room." },
+    { q: "What's the dress code?", a: "Relaxed all weekend. The only exception is Saturday's dinner, which is a bit formal." },
+    { q: "Do I need a passport or visa?", a: "You'll need a valid passport to enter México. Most visitors don't need a visa for a short trip, but check your country's rules." },
+  ],
+
   // ── Backend ──────────────────────────────────────────────────
   // Google Apps Script Web App URL (see README.md, step 3).
-  appsScriptUrl: "https://script.google.com/macros/s/AKfycbxzyUG7XGcRktCgNsMaj66CuH2lltyMBuGyC_TVd5YXFtuc5WjcWksAJH4J839Fds946w/exec",
+  appsScriptUrl: "https://script.google.com/macros/s/AKfycbzPedQNqNbk3RtLwMNWAYnh880_I3iejzGr6oIxwvB1tv7HRiGRx9TFdTT_nC2IRaSdfQ/exec",
 };
