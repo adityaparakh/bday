@@ -54,8 +54,9 @@ window.INVITE_CONFIG = {
       day: "Sat · Oct 10", title: "The big day & night two",
       items: [
         { time: "Morning",  text: "Breakfast + hotel time", tag: "optional" },
-        { time: "12-4 pm",  text: "Explore Cabo city, with a taco & tequila tasting at 1pm 🌮" },
-        { time: "4:00 pm",  text: "Yacht on the water 🛥️" },
+        { time: "12:00 pm", text: "Taco & tequila tasting 🌮" },
+        { time: "2-4 pm",   text: "Sightsee Cabo city" },
+        { time: "4:00 pm",  text: "Yacht on the water, with dinner on board 🛥️" },
         { time: "Evening",  text: "Second night out in Cabo 🪩" },
       ],
     },
