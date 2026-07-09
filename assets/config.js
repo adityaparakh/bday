@@ -42,21 +42,22 @@ window.INVITE_CONFIG = {
   // Each day has timed `items`; `tag` shows a little pill (optional / formal / TBD).
   itinerary: [
     {
-      day: "Fri · Oct 9", title: "Arrive & set sail",
+      day: "Fri · Oct 9", title: "Land & first night",
       items: [
-        { time: "By noon", text: "Get there and settle in" },
-        { time: "Lunch",   text: "Grab a bite", tag: "optional" },
-        { time: "4:00 pm", text: "Yacht + swimming in the ocean 🛥️" },
-        { time: "Evening", text: "Dinner on the yacht" },
+        { time: "By 3:00 pm", text: "Arrive & check in" },
+        { time: "If early",   text: "Lunch, then pool, basketball, tennis or pickleball", tag: "optional" },
+        { time: "6:00 pm",    text: "Dinner" },
+        { time: "Evening",    text: "Nightlife out in Cabo 🪩" },
       ],
     },
     {
-      day: "Sat · Oct 10", title: "Adventures & the big night",
+      day: "Sat · Oct 10", title: "The main event",
       items: [
-        { time: "9-11 am",   text: "Breakfast", tag: "optional" },
-        { time: "Midday",    text: "Off to adventures", tag: "TBD" },
-        { time: "7:00 pm",   text: "Dinner", tag: "formal" },
-        { time: "10:00 pm+", text: "Night out 🪩" },
+        { time: "Morning",  text: "Breakfast + hotel time", tag: "optional" },
+        { time: "12-4 pm",  text: "Sightsee Cabo city" },
+        { time: "1:00 pm",  text: "Taco & tequila tasting 🌮" },
+        { time: "4:00 pm",  text: "Yacht on the water 🛥️" },
+        { time: "Evening",  text: "Nightlife out in Cabo 🪩" },
       ],
     },
     {
@@ -80,7 +81,7 @@ window.INVITE_CONFIG = {
     { q: "Where are we staying?", a: "The Westin Los Cabos Resort Villas, Baja Point, a cliffside resort right on the Sea of Cortez in San José del Cabo. Your room there is already booked and paid for, so you just cover your flights and anything you spend there." },
     { q: "What should I pack?", a: "Swimwear, warm-weather clothes, and something a little dressy for Saturday dinner. Don't forget your passport." },
     { q: "How do I get from the airport?", a: "Add your flight times to your RSVP and we'll arrange a shuttle. The resort is about 40 minutes from SJD." },
-    { q: "What's the dress code?", a: "Relaxed all weekend. The only exception is Saturday's dinner, which is a bit formal." },
+    { q: "What's the dress code?", a: "Casual and warm-weather all weekend. Bring a nicer outfit or two for dinners and the nights out in Cabo." },
     { q: "Do I need a passport or visa?", a: "You'll need a valid passport to enter México. Most visitors don't need a visa for a short trip, but check your country's rules." },
   ],
 
