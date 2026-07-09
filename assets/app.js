@@ -216,7 +216,7 @@
   if (notYou) notYou.addEventListener("click", resetIdentity);
 
   function resetIdentity() {
-    if (guestEmail) clearDraft(guestEmail);
+    if (guestEmail) { clearDraft(guestEmail); clearSnap(guestEmail); }
     rememberEmail("");
     guestEmail = "";
     guestGreet = "";

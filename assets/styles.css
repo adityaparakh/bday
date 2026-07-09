@@ -599,6 +599,12 @@ input:focus, textarea:focus {
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(255,209,102,.22);
 }
+/* visible keyboard focus for everything else (buttons, links, radios, FAQ) */
+a:focus-visible, button:focus-visible, summary:focus-visible,
+[tabindex]:focus-visible, input[type="radio"]:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
 /* keep native date/time pickers legible on dark */
 input[type="date"], input[type="time"], input[type="datetime-local"] { color-scheme: dark; }
 textarea { resize: vertical; }

@@ -182,10 +182,13 @@ function handleRsvp(body) {
       // sanitize every guest-supplied string (formula injection + length)
       rowVals[C.name] = safeCell(g.name);
       rowVals[C.confirmed] = g.attending === "Yes" ? "Yes" : (g.attending === "No" ? "No" : "");
-      rowVals[C.arrivalFlight] = safeCell(g.arrivalFlight);
-      rowVals[C.arrivalTime] = safeCell(g.arrivalTime);
-      rowVals[C.departureFlight] = safeCell(g.departureFlight);
-      rowVals[C.departureTime] = safeCell(g.departureTime);
+      // Flights: keep the saved value when the submit leaves one blank. The
+      // frontend can't prefill flights on a fresh device (check omits them),
+      // so a re-submit there must not wipe details already on file.
+      rowVals[C.arrivalFlight] = keepIfBlank(rowVals[C.arrivalFlight], g.arrivalFlight);
+      rowVals[C.arrivalTime] = keepIfBlank(rowVals[C.arrivalTime], g.arrivalTime);
+      rowVals[C.departureFlight] = keepIfBlank(rowVals[C.departureFlight], g.departureFlight);
+      rowVals[C.departureTime] = keepIfBlank(rowVals[C.departureTime], g.departureTime);
       rowVals[C.notes] = notesPlaced ? String(rowVals[C.notes] || "") : safeCell(partyNotes);
       rowVals[C.updated] = now;
       notesPlaced = true; // party notes land on the first guest only
@@ -254,6 +257,13 @@ function safeCell(v) {
   if (s.length > MAX_LEN) s = s.slice(0, MAX_LEN);
   if (/^[=+\-@\t\r\n]/.test(s)) s = "'" + s;
   return s;
+}
+
+/** Keep the existing cell if the incoming value is blank; else sanitize+set. */
+function keepIfBlank(existing, incoming) {
+  return String(incoming == null ? "" : incoming).trim()
+    ? safeCell(incoming)
+    : String(existing == null ? "" : existing);
 }
 
 function json(obj) {
