@@ -8,22 +8,22 @@ window.INVITE_CONFIG = {
   nickname: "Adi",           // used in the reveal: "Adi's 30th"
   milestone: "30th",         // the birthday number ("30th", "25th"…)
   occasion: "Escape",        // the teaser word under the wordmark
-  dates: "Oct 9–11, 2026",
+  dates: "Oct 9-11, 2026",
   tagline: "Yachts, sunsets, and a whole lot of dancing.",
 
-  // Shown on the first page instead of the location — keeps the
-  // destination off the landing page (revealed after they RSVP).
-  locationTeaser: "☀️ Somewhere warm — RSVP for the details",
+  // Shown on the first page instead of the location, so the spot stays
+  // off the landing page (it gets revealed once they RSVP).
+  locationTeaser: "☀️ Somewhere warm. RSVP for the details",
 
   // ── The reveal (shown AFTER a guest unlocks with their email) ─
   location: "Cabo San Lucas, México",   // full destination
   locationShort: "Cabo",                // the big word in the reveal animation
 
-  // Where everyone's staying — the generous bit 🎉
+  // Where everyone's staying (the fun part) 🎉
   hotel: {
-    name: "The Westin Los Cabos Resort Villas – Baja Point",
-    note: "Your room is already booked — and paid for. Just get yourself there; we'll handle the rest.",
-    blurb: "Our home base: a cliffside villa resort perched right over the Sea of Cortez — infinity pools, a private beach, a full spa, and six restaurants.",
+    name: "The Westin Los Cabos Resort Villas, Baja Point",
+    note: "Your room's already booked and paid for. Just get yourself there and we've got the rest.",
+    blurb: "Home base is a cliffside villa resort right on the Sea of Cortez, with infinity pools, a private beach, a full spa, and six restaurants.",
     amenities: ["🏖️ Private beach", "🏊 Infinity pools", "💆 Spa Otomí", "🍽️ 6 restaurants"],
     address: "Carretera Transpeninsular KM 22.5, San José del Cabo, B.C.S. 23400, México",
     phone: "+52 624 142 9000",
@@ -38,13 +38,13 @@ window.INVITE_CONFIG = {
     ],
   },
 
-  // The weekend, told as chapters (your "journey").
+  // The weekend, told day by day.
   // Each day has timed `items`; `tag` shows a little pill (optional / formal / TBD).
   itinerary: [
     {
       day: "Fri · Oct 9", title: "Arrive & set sail",
       items: [
-        { time: "By noon", text: "Be there — check in & settle" },
+        { time: "By noon", text: "Get there and settle in" },
         { time: "Lunch",   text: "Grab a bite", tag: "optional" },
         { time: "4:00 pm", text: "Yacht + swimming in the ocean 🛥️" },
         { time: "Evening", text: "Dinner on the yacht" },
@@ -53,7 +53,7 @@ window.INVITE_CONFIG = {
     {
       day: "Sat · Oct 10", title: "Adventures & the big night",
       items: [
-        { time: "9–11 am",   text: "Breakfast", tag: "optional" },
+        { time: "9-11 am",   text: "Breakfast", tag: "optional" },
         { time: "Midday",    text: "Off to adventures", tag: "TBD" },
         { time: "7:00 pm",   text: "Dinner", tag: "formal" },
         { time: "10:00 pm+", text: "Night out 🪩" },
@@ -68,13 +68,13 @@ window.INVITE_CONFIG = {
     },
   ],
 
-  // Getting there — flows into the flight-details form.
+  // Getting there. Flows into the flight-details form.
   travel: {
     airport: "Los Cabos International (SJD)",
-    note: "Fly into SJD — it's about 40 minutes from the resort. Drop your flight times below and we'll sort out airport pickups.",
+    note: "Fly into SJD, about 40 minutes from the resort. Drop your flight times below and we'll sort out airport pickups.",
   },
 
   // ── Backend ──────────────────────────────────────────────────
-  // Google Apps Script Web App URL (see README.md → step 3).
+  // Google Apps Script Web App URL (see README.md, step 3).
   appsScriptUrl: "https://script.google.com/macros/s/AKfycbxzyUG7XGcRktCgNsMaj66CuH2lltyMBuGyC_TVd5YXFtuc5WjcWksAJH4J839Fds946w/exec",
 };

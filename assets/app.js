@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────
-   Birthday Escape Invite — front-end logic
+   Birthday Escape Invite: front-end logic
    - a stepped "deck": one slide at a time, Next/Back to move through
    - injects config into the page
    - email gate → backend allowlist check
