@@ -77,12 +77,4 @@ window.INVITE_CONFIG = {
   // ── Backend ──────────────────────────────────────────────────
   // Google Apps Script Web App URL (see README.md → step 3).
   appsScriptUrl: "https://script.google.com/macros/s/AKfycbxzyUG7XGcRktCgNsMaj66CuH2lltyMBuGyC_TVd5YXFtuc5WjcWksAJH4J839Fds946w/exec",
-
-  // The vibe checklist shown under the hero (public — no location).
-  highlights: [
-    { icon: "🛥️", label: "A day out on the water" },
-    { icon: "🌅", label: "Sunset cocktails" },
-    { icon: "🪩", label: "Dancing till late" },
-    { icon: "🌮", label: "Tacos & tequila" },
-  ],
 };

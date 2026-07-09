@@ -97,16 +97,6 @@
     setText("travel-note", tNote);
   }
 
-  var list = document.getElementById("highlight-list");
-  if (list && Array.isArray(cfg.highlights)) {
-    list.innerHTML = "";
-    cfg.highlights.forEach(function (h) {
-      var li = document.createElement("li");
-      li.innerHTML = '<span class="emoji">' + h.icon + "</span><span>" + escapeHtml(h.label) + "</span>";
-      list.appendChild(li);
-    });
-  }
-
   // ── Element refs ──────────────────────────────────────
   var gateForm = document.getElementById("gate-form");
   var gateEmail = document.getElementById("gate-email");
@@ -128,7 +118,7 @@
   var guestName = "";
 
   // ── The deck ──────────────────────────────────────────
-  var STEPS = ["hero", "vibe", "gate", "reveal", "stay", "weekend", "travel", "rsvp", "success"];
+  var STEPS = ["hero", "gate", "reveal", "stay", "weekend", "travel", "rsvp", "success"];
   var slides = {};
   document.querySelectorAll(".slide").forEach(function (s) { slides[s.dataset.step] = s; });
   var currentIndex = 0;
