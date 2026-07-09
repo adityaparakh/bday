@@ -87,5 +87,5 @@ window.INVITE_CONFIG = {
 
   // ── Backend ──────────────────────────────────────────────────
   // Google Apps Script Web App URL (see README.md, step 3).
-  appsScriptUrl: "https://script.google.com/macros/s/AKfycbzPedQNqNbk3RtLwMNWAYnh880_I3iejzGr6oIxwvB1tv7HRiGRx9TFdTT_nC2IRaSdfQ/exec",
+  appsScriptUrl: "https://script.google.com/macros/s/AKfycbw6qnxD95_44D8Ap3OSha-8fj78ZKLThnmzRrrDN-g8uF1aAVpqtF2dpeYk8ByZ5wXwdw/exec",
 };
