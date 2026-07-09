@@ -572,6 +572,7 @@ h1, h2, h3 { margin: 0; line-height: 1.05; }
 .faq-item > summary::after { content: "+"; color: var(--gold); font-size: 1.3rem; line-height: 1; flex: none; }
 .faq-item[open] > summary::after { content: "–"; }
 .faq-item > p { margin: 0; padding: 0 16px 14px; color: var(--sand-dim); line-height: 1.55; }
+.faq-plan { margin-top: 1.3em; }
 
 /* fields */
 .field { display: block; margin-bottom: 1em; }
