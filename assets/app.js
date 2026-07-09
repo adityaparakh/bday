@@ -27,6 +27,12 @@
   function getDraft(email) { try { return JSON.parse(STORE.read(draftKey(email)) || "null"); } catch (e) { return null; } }
   function setDraft(email, d) { STORE.write(draftKey(email), JSON.stringify(d)); }
   function clearDraft(email) { STORE.remove(draftKey(email)); }
+  // Snapshot of the last resolved view, so a refresh can restore the right
+  // screen INSTANTLY (no backend round-trip) before revalidating in the bg.
+  function snapKey(email) { return "bday.snap." + (email || ""); }
+  function getSnap(email) { try { return JSON.parse(STORE.read(snapKey(email)) || "null"); } catch (e) { return null; } }
+  function setSnap(email, s) { STORE.write(snapKey(email), JSON.stringify(s)); }
+  function clearSnap(email) { STORE.remove(snapKey(email)); }
 
   // ── Populate content from config ──────────────────────
   function setText(id, value) {
@@ -291,17 +297,9 @@
           return showError(gateError, "Hmm, that email isn't on the guest list. Double-check it, or ping " + (cfg.hostName || "the host") + ".");
         }
         // unlocked
-        guestEmail = email;
         rememberEmail(email);
-        guestGreet = res.greetName || "";
-        applyGreeting();
-        renderParty(res.guests || [], res.notes || "");
-        if (res.alreadyRsvped) {
-          renderConfirmed(res.guests || []);
-          goTo("confirmed");
-        } else {
-          goTo("reveal");
-        }
+        saveSnap(email, res);
+        showState(email, res, { silent: false });   // fresh unlock → confetti on reveal
       })
       .catch(function () {
         loading(gateSubmit, false);
@@ -329,6 +327,41 @@
     } else {
       welcome.hidden = true;
     }
+  }
+
+  // Persist just enough to repaint the right screen on the next load.
+  function saveSnap(email, data) {
+    if (!email || !data) return;
+    setSnap(email, {
+      greetName: data.greetName || "",
+      notes: data.notes || "",
+      alreadyRsvped: !!data.alreadyRsvped,
+      guests: (data.guests || []).map(function (g) {
+        return { row: g.row || "", name: g.name || "", attending: g.attending || "" };
+      }),
+    });
+  }
+
+  // Render + navigate to the screen matching `data` (a snapshot or a fresh
+  // backend response). With opts.onlyMoveIfChanged, it refreshes the content
+  // but won't yank a user who's already navigated past the landing screens.
+  function showState(email, data, opts) {
+    opts = opts || {};
+    guestEmail = email;
+    guestGreet = data.greetName || "";
+    applyGreeting();
+    renderParty(data.guests || [], data.notes || "");
+
+    var target = data.alreadyRsvped ? "confirmed" : "reveal";
+    if (data.alreadyRsvped) renderConfirmed(data.guests || []);
+
+    if (opts.onlyMoveIfChanged) {
+      var active = document.querySelector(".slide.is-active");
+      var step = active && active.dataset.step;
+      if (step !== "reveal" && step !== "confirmed") return; // they've moved on
+      if (step === target) return;                           // already correct
+    }
+    goTo(target, { silent: !!opts.silent });
   }
 
   // ── Party rendering (editable guest list) ─────────────
@@ -540,6 +573,12 @@
         if (!res || !res.ok) {
           return showError(rsvpError, (res && res.error) || "Couldn't save that. Try again.");
         }
+        // remember that this party has now RSVP'd, so a refresh lands on the
+        // confirmed screen (not the reveal) with the right in/out per guest.
+        saveSnap(guestEmail, {
+          greetName: guestGreet, notes: partyNotes.value || "",
+          alreadyRsvped: true, guests: guests,
+        });
         showSuccess(anyYes);
       })
       .catch(function () {
@@ -564,25 +603,31 @@
 
   renderFaq();
 
-  // ── Returning visitor: silently restore from a remembered email ──
+  // ── Returning visitor: restore instantly, then revalidate ──
   (function restore() {
     var saved = savedEmail();
     if (!saved) return;
+
+    // 1) Paint the last known screen immediately from the local snapshot, so
+    //    we never flash the cover while the backend round-trips.
+    var snap = getSnap(saved);
+    if (snap) showState(saved, snap, { silent: true });
+
+    // 2) Revalidate in the background and reconcile with the server.
     callBackend({ action: "check", email: saved })
       .then(function (res) {
-        if (!res || !res.ok || !res.allowed) { rememberEmail(""); return; } // removed from list
-        guestEmail = saved;
-        guestGreet = res.greetName || "";
-        applyGreeting();
-        renderParty(res.guests || [], res.notes || "");
-        if (res.alreadyRsvped) {
-          renderConfirmed(res.guests || []);
-          goTo("confirmed");
-        } else {
-          goTo("reveal", { silent: true });
+        if (!res || !res.ok) return;                 // transient error: keep cached view
+        if (!res.allowed) {                          // removed from the guest list
+          rememberEmail(""); clearSnap(saved); clearDraft(saved);
+          if (snap) resetIdentity();                 // pull them back to the gate
+          return;
         }
+        saveSnap(saved, res);
+        // If we already painted a cached screen, only re-navigate when the
+        // coarse state actually changed; otherwise this is the first paint.
+        showState(saved, res, { silent: true, onlyMoveIfChanged: !!snap });
       })
-      .catch(function () { /* offline: just leave them on the cover */ });
+      .catch(function () { /* offline: keep the cached view (or stay on cover) */ });
   })();
 
   // ── Small UI helpers ──────────────────────────────────
