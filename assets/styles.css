@@ -787,6 +787,20 @@ input.invalid, textarea.invalid {
   .flight-block { padding: 1em .9em .3em; }
   .card { border-radius: 22px; }
 
+  /* Itinerary: compact enough that the whole weekend fits one phone
+     screen (so it screenshots in a single shot). */
+  .slide[data-step="weekend"] { padding-top: 20px; padding-bottom: 20px; }
+  .slide[data-step="weekend"] .card { padding: 18px 18px 16px; }
+  .slide[data-step="weekend"] .section-eyebrow { margin-bottom: .6em; }
+  .slide[data-step="weekend"] .nav-row { margin-top: 1em; }
+  .t-item { padding: 0 0 13px 20px; }
+  .t-day { font-size: .7rem; }
+  .t-title { font-size: 1.02rem; margin-bottom: .3em; }
+  .t-sched { gap: .3em; }
+  .t-sched > li { gap: 8px; }
+  .t-time { min-width: 56px; font-size: .74rem; }
+  .t-what { font-size: .88rem; line-height: 1.32; }
+
   /* The wide sunset SVG is center-cropped on phones, so the palms and
      yacht (positioned for the full desktop width) fall outside the frame.
      Re-anchor them into the visible center band. */
