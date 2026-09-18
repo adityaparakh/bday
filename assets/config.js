@@ -42,22 +42,22 @@ window.INVITE_CONFIG = {
   // Each day has timed `items`; `tag` shows a little pill (optional / formal / TBD).
   itinerary: [
     {
-      day: "Fri · Oct 9", title: "Arrivals & night one",
+      day: "Fri · Oct 9", title: "Arrivals & out to sea",
       items: [
-        { time: "By 3 pm",   text: "Fly in and check in (earlier is welcome!)" },
-        { time: "Afternoon", text: "Free time to do your thing: pool, basketball, tennis, pickleball, or lunch", tag: "optional" },
-        { time: "6:00 pm",   text: "Dinner together" },
-        { time: "Evening",   text: "First night out in Cabo 🍸" },
+        { time: "By 3 pm",  text: "Fly in and check in (earlier is welcome!)" },
+        { time: "4:30 pm",  text: "Yacht on the water for 3 hours, food & drinks included. Wear your swimsuit and bring a change of clothes, we're jumping in 🛥️" },
+        { time: "After",    text: "Going with the flow: music, games, and partying 🍸" },
       ],
     },
     {
       day: "Sat · Oct 10", title: "The big day & night two",
       items: [
-        { time: "Morning",  text: "Breakfast + hotel time", tag: "optional" },
-        { time: "12:00 pm", text: "Taco & tequila tasting 🌮" },
-        { time: "2-4 pm",   text: "Sightsee Cabo city" },
-        { time: "4:00 pm",  text: "Yacht on the water, with dinner on board 🛥️" },
-        { time: "Evening",  text: "Second night out in Cabo 🪩" },
+        { time: "Morning",  text: "Free for all: sleep in, breakfast, explore the hotel", tag: "optional" },
+        { time: "Midday",   text: "Lunch in the historic heart of Cabo San Lucas 🌮" },
+        { time: "2-5 pm",   text: "Walking around Cabo San Lucas" },
+        { time: "5-7 pm",   text: "Rest & recharge back at the hotel" },
+        { time: "7:30 pm",  text: "Dinner at Ilios, Greek restaurant 🍽️" },
+        { time: "After",    text: "Partying after Ilios 🪩" },
       ],
     },
     {
@@ -79,7 +79,7 @@ window.INVITE_CONFIG = {
   // Edit / add / remove freely.
   faq: [
     { q: "Where are we staying?", a: "The Westin Los Cabos Resort Villas, Baja Point, a cliffside resort right on the Sea of Cortez in San José del Cabo. Your room there is already booked and paid for, so you just cover your flights and anything you spend there." },
-    { q: "What should I pack?", a: "Swimwear, warm-weather clothes, and something a little dressy for Saturday dinner. Don't forget your passport." },
+    { q: "What should I pack?", a: "Swimwear (you'll want it on for Friday's yacht, plus a change of clothes), warm-weather clothes, comfy shoes for walking around Cabo on Saturday, and something a little dressy for Saturday dinner. Don't forget your passport." },
     { q: "How do I get from the airport?", a: "Add your flight times to your RSVP and we'll arrange a shuttle. The resort is about 40 minutes from SJD." },
     { q: "What's the dress code?", a: "Casual and warm-weather all weekend. Bring a nicer outfit or two for dinners and the nights out in Cabo." },
     { q: "Do I need a passport or visa?", a: "You'll need a valid passport to enter México. Most visitors don't need a visa for a short trip, but check your country's rules." },
